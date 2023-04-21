@@ -15,9 +15,8 @@
 
 
 import flask
-from flask import request, jsonify
+from flask import *;
 from flask_login import *
-from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #per adesso da cambiare
