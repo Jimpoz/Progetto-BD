@@ -1,5 +1,26 @@
+#create config
+#create users structure
+#create login structure
+#create login page
+#create login function
+#create logout function
+#create home page
+#create home page function
+#create register page
+#create register function
+#create profile page
+#create profile function
+#create profile edit page
+#create profile edit function
+
+
 import flask
 from flask import request, jsonify
-from flask_cors import CORS
+from flask_login import *
+from flask_login import LoginManager
 
-#da aspettare la consegna del progetto
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!' #per adesso da cambiare
+
+login_manager = LoginManager()
+login_manager.init_app(app)
