@@ -1,8 +1,11 @@
-import flask
+import flask;
+from db_setup import db, Docente;
 from flask import Flask, render_template, url_for;
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
+db.init_app(app)
+
 app.config['SECRET_KEY'] = 'secret_key' #to change later
 
 
