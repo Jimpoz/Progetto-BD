@@ -5,13 +5,41 @@ from flask_login import UserMixin;
 db = SQLAlchemy() #the app inside the brackets was not needed
 #Test class
 class Docente(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    idD = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     email = db.Column(db.String(100))
     password = db.Column(db.String(100))
-    #def __init__(self, nome, cognome, email, password):
-    #    self.nome = nome
-    #    self.cognome = cognome
-    #    self.email = email
-    #    self.password = password
+    
+class Studente( db.Model):
+    idS = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100))
+    cognome = db.Column(db.String(100))
+    
+class Esame( db.Model):
+    idE = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100))
+    superato = db.Column(db.Boolean)
+    
+class Prova( db.Model ):
+    idP = db.Column(db.Integer, primary_key=True)
+    superata = db.Column(db.Boolean)
+    voto = db.Column(db.Integer)
+    idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
+    
+    
+class Appelli( db.Model ):
+    idA = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(100))
+    idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
+    idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
+    
+class Creazione_esame( db.Model ):
+    #idC = db.Column(db.Integer, primary_key=True)
+    idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
+    idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
+    
+class Registrazione_esame( db.Model ):
+    #idR = db.Column(db.Integer, primary_key=True)
+    idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
+    idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
