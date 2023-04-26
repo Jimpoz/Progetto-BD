@@ -9,15 +9,18 @@
 </head>
 
 <body>
-    <h1>Registrazione</h1>
+    <h1>Registrazione dell'utente autorizzato</h1>
     <form action="/register" method="POST">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <label for="name">Nome</label>
+        <input type="text" name="name" id="name">
+        <label for="surname">Cognome</label>
+        <input type="text" name="surname" id="surname">
         <label for="email">Email</label>
         <input type="email" name="email" id="email">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password">
         <input type="submit" value="Registrati">
+        <h1>Sei già registrato? <a href="/login">Accedi</a></h1>
     </form>
 </body>
     
