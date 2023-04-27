@@ -24,6 +24,7 @@ class Esame( db.Model):
     
 class Prova( db.Model ):
     idP = db.Column(db.Integer, primary_key=True)
+    tipo = db.Column(db.String(100))
     superata = db.Column(db.Boolean)
     voto = db.Column(db.Integer)
     scadenza = db.Column(db.Date)
