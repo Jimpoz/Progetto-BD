@@ -1,23 +1,28 @@
 import flask
+import app 
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
 
-db = SQLAlchemy() #the app inside the brackets was not needed
+
+db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
+app.config['SECRET_KEY'] = 'secret_key' #to change later
+
 #Test class
 class Docente(UserMixin, db.Model):
-    idD = db.Column(db.Integer, primary_key=True)
+    idD = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
     
 class Studente( db.Model):
-    idS = db.Column(db.Integer, primary_key=True)
+    idS = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     
 class Esame( db.Model):
-    idE = db.Column(db.Integer, primary_key=True)
+    idE = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     giorno = db.Column(db.Date)
     superato = db.Column(db.Boolean)
@@ -33,7 +38,7 @@ class Prova( db.Model ):
     
     
 class Appelli( db.Model ):
-    idA = db.Column(db.Integer, primary_key=True)
+    idA = db.Column(db.Integer, primary_key=True, unique = True)
     data = db.Column(db.String(100))
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
@@ -47,3 +52,4 @@ class Registrazione_esame( db.Model ):
     idR = db.Column(db.Integer, primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
+    

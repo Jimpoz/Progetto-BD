@@ -10,16 +10,14 @@
 
 <body>
     <h1>Registrazione dell'utente autorizzato</h1>
-    <form action="/register" method="POST">
-        <label for="name">Nome</label>
-        <input type="text" name="name" id="name">
-        <label for="surname">Cognome</label>
-        <input type="text" name="surname" id="surname">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password">
-        <input type="submit" value="Registrati">
-        <h1>Sei già registrato? <a href="/login">Accedi</a></h1>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.name }}
+        {{ form.surname }}
+        {{ form.cf }}
+        {{ form.email }}
+        {{ form.password }}
+        {{ form.submit }}
     </form>
+    <a href="{{ url_for('login') }}">Sei già registrato?</a>
 </body>

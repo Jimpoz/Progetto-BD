@@ -11,11 +11,12 @@
 
 <body>
     <h1>Login page</h1>
-    <form action="/login" method="post">
-        <label for="email">E-mail:</label>
-        <input type="text" name="email" id="email" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Login">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.email }}
+        {{ form.password }}
+        {{ form.submit }}
+    </form>
+    <a href="{{ url_for('register') }}">Non sei ancora registrato?</a>
 </body>
 </html>
