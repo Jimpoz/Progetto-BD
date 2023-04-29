@@ -1,5 +1,4 @@
 import flask
-#from db_setup import Docente
 from flask import Flask, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, ValidationError
@@ -13,9 +12,6 @@ app.config['SECRET_KEY'] = 'secret_key' #to change later
 db = SQLAlchemy(app)
 Bcrypt = Bcrypt(app)
 
-#initializing the database
-with app.app_context():
-    db.create_all()
 
 class Registration_From( FlaskForm ):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
@@ -34,6 +30,7 @@ class Registration_From( FlaskForm ):
             
             
 class Login_form( FlaskForm ):
+    from db_setup import Docente  # import here to avoid circular import
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)], render_kw={"placeholder": "Password"})
     
@@ -45,6 +42,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    from db_setup import Docente  # import here to avoid circular import
     form = Login_form()
     return flask.render_template('login.html', form=form)
 
@@ -62,5 +60,8 @@ def register():
     return flask.render_template('register.html', form=form)
 
 if __name__ == '__main__':
-    db.create_all()
+    #initialize the database
+    with app.app_context():
+        from db_setup import init_db
+        init_db()
     app.run(debug=True)
