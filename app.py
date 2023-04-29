@@ -62,6 +62,7 @@ def register():
 if __name__ == '__main__':
     #initialize the database
     with app.app_context():
-        from db_setup import init_db
-        init_db()
+        from db_setup import Docente, Studente, Esame, Prova, Appelli, Creazione_esame, Registrazione_esame
+        db.create_all()
+        db.commit_session()
     app.run(debug=True)
