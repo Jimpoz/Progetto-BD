@@ -1,5 +1,5 @@
 import flask
-from db_setup import *
+#from db_setup import Docente
 from flask import Flask, render_template, url_for
 from flask_wtf import FlaskForm
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, ValidationError
@@ -8,9 +8,12 @@ from wtforms.validators import InputRequired, Length, ValidationError, Email
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
+app.config['SECRET_KEY'] = 'secret_key' #to change later
+db = SQLAlchemy(app)
 Bcrypt = Bcrypt(app)
 
+#initializing the database
 with app.app_context():
     db.create_all()
 
@@ -24,6 +27,7 @@ class Registration_From( FlaskForm ):
     submit = SubmitField('Registrati')
     
     def validate_email(self, email):
+        from db_setup import Docente  # import here to avoid circular import
         user = Docente.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Email già registrata')
@@ -46,6 +50,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    from db_setup import Docente  # import here to avoid circular import
     form = Registration_From()
     
     if form.validate_on_submit():

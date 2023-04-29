@@ -1,12 +1,7 @@
 import flask
-import app 
+from app import *
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
-
-
-db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
-app.config['SECRET_KEY'] = 'secret_key' #to change later
 
 #Test class
 class Docente(UserMixin, db.Model):
