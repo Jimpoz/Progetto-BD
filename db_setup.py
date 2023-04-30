@@ -3,6 +3,8 @@ from app import *
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
 
+db = SQLAlchemy()
+
 #Test class
 class Docente(UserMixin, db.Model):
     idD = db.Column(db.Integer, primary_key=True, unique = True)
