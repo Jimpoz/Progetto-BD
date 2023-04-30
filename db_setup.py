@@ -1,6 +1,8 @@
-from app import  db
+#from app import  db
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
+
+db = SQLAlchemy()
 
 #Test class
 class Docente(UserMixin, db.Model):
@@ -46,8 +48,3 @@ class Registrazione_esame( db.Model ):
     idR = db.Column(db.Integer, primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
-    
-    
-def init_db():
-    db.create_all()
-    db.session.commit()

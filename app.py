@@ -5,13 +5,19 @@ from wtforms import Form, StringField, PasswordField, validators, SubmitField, V
 from flask_bcrypt import Bcrypt
 from wtforms.validators import InputRequired, Length, ValidationError, Email
 from flask_sqlalchemy import SQLAlchemy
+from db_setup import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
+#db = SQLAlchemy(app)
+db.init_app(app)
 app.config['SECRET_KEY'] = 'secret_key' #to change later
-db = SQLAlchemy(app)
 Bcrypt = Bcrypt(app)
 
+
+#initialize the database
+with app.app_context():
+    db.create_all()
 
 class Registration_From( FlaskForm ):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
@@ -60,9 +66,4 @@ def register():
     return flask.render_template('register.html', form=form)
 
 if __name__ == '__main__':
-    #initialize the database
-    with app.app_context():
-        from db_setup import Docente, Studente, Esame, Prova, Appelli, Creazione_esame, Registrazione_esame
-        db.create_all()
-        db.commit_session()
     app.run(debug=True)
