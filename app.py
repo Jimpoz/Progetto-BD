@@ -1,10 +1,9 @@
 import flask
-from flask import Flask, render_template, url_for
+from flask import Flask
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, PasswordField, validators, SubmitField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, ValidationError
 from flask_bcrypt import Bcrypt
 from wtforms.validators import InputRequired, Length, ValidationError, Email
-from flask_sqlalchemy import SQLAlchemy
 from db_setup import db
 
 app = Flask(__name__)

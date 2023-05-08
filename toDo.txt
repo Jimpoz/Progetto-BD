@@ -1,0 +1,10 @@
+each webpage needs to have a file for representation
+
+example:
+login needs to be a folder containing backend and frontend
+
+- login
+- register
+- validation page ( for exams and tests )
+- student page ( in order to see how many exams and tests a student has taken )
+- and maybe more
