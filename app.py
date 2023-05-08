@@ -1,14 +1,13 @@
 import flask
 from flask import Flask
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, ValidationError
 from flask_bcrypt import Bcrypt
-from wtforms.validators import InputRequired, Length, ValidationError, Email
 from db_setup import db
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local_db.db'
-#db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+    'sqlite:///' + os.path.join(app.root_path, 'database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 app.config['SECRET_KEY'] = 'secret_key' #to change later
 Bcrypt = Bcrypt(app)
@@ -18,6 +17,7 @@ Bcrypt = Bcrypt(app)
 with app.app_context():
     db.create_all()
 
+"""
 class Registration_From( FlaskForm ):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)], render_kw={"placeholder": "Password"})
@@ -32,25 +32,14 @@ class Registration_From( FlaskForm ):
         user = Docente.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Email già registrata')
-            
-            
-class Login_form( FlaskForm ):
-    from db_setup import Docente  # import here to avoid circular import
-    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
-    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)], render_kw={"placeholder": "Password"})
-    
-    submit = SubmitField('Login')
+"""
 
 @app.route('/')
 def index():
     return flask.render_template('index.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    from db_setup import Docente  # import here to avoid circular import
-    form = Login_form()
-    return flask.render_template('login.html', form=form)
 
+"""
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     from db_setup import Docente  # import here to avoid circular import
@@ -63,6 +52,7 @@ def register():
         db.session.commit()
     
     return flask.render_template('register.html', form=form)
+"""
 
 if __name__ == '__main__':
     app.run(debug=True)
