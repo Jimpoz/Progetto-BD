@@ -48,3 +48,18 @@ def homepage():
 def load_user(user_id):
     from db_setup import Docente
     return Docente.query.get(int(user_id))
+
+@bp.route('/create_exam', methods=['GET', 'POST'])
+@login_required
+def create_exam():
+    return flask.render_template('create_exam.html')
+
+@bp.route('/view_exams', methods=['GET', 'POST'])
+@login_required
+def view_exams():
+    return flask.render_template('view_exams.html')
+
+@bp.route('/search_student', methods=['GET', 'POST'])
+@login_required
+def search_student():
+    return flask.render_template('search_student.html')

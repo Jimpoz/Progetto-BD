@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="../static/homepage.css">
     <meta charset="UTF-8">
-    <title>HOMEPAGE</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
 </head>
 
 <body>
-    TEST
+    <h1>{{ user.nome }} {{ user.cognome }}</h1>
+    
+    <div class="button-group">
+        <a href="{{ url_for('routes.create_exam') }}" class="button">Crea esame</a>
+        <a href="{{ url_for('routes.view_exams') }}" class="button">Visualizza lista esami</a>
+    </div>
+    
+    <div class="search-bar">
+        <form action="{{ url_for('routes.search_student') }}" method="POST">
+            <input type="text" name="search" placeholder="Cerca matricola">
+            <input type="submit" value="Cerca">
+        </form>
+    </div>
+    
+    <a href="{{ url_for('routes.login') }}">Logout</a><br> 
 </body>
