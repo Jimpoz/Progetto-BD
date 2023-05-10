@@ -1,7 +1,7 @@
 import flask
 from flask import Blueprint
 from flask_login import login_required, login_user, current_user
-from flask_login import LoginManager  # Import LoginManager here
+from flask_login import LoginManager 
 
 login_manager = LoginManager()
 
@@ -41,10 +41,25 @@ def logout():
 @login_required
 def homepage():
     from db_setup import Docente
-    user = Docente.query.get(int(current_user.id))
+    user = Docente.query.get(int(current_user.idD))
     return flask.render_template('homepage.html', user=user)
 
 @login_manager.user_loader
-def load_user(docente):
+def load_user(user_id):
     from db_setup import Docente
-    return Docente.get(docente)
+    return Docente.query.get(int(user_id))
+
+@bp.route('/create_exam', methods=['GET', 'POST'])
+@login_required
+def create_exam():
+    return flask.render_template('create_exam.html')
+
+@bp.route('/view_exams', methods=['GET', 'POST'])
+@login_required
+def view_exams():
+    return flask.render_template('view_exams.html')
+
+@bp.route('/search_student', methods=['GET', 'POST'])
+@login_required
+def search_student():
+    return flask.render_template('search_student.html')
