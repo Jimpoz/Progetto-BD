@@ -1,17 +1,24 @@
-import flask
-from app import *
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
-#Test class
 class Docente(UserMixin, db.Model):
     idD = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     email = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(100))
+    
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+    
+    def get_id(self):
+           return (self.idD)
     
 class Studente( db.Model):
     idS = db.Column(db.Integer, primary_key=True, unique = True)
@@ -49,4 +56,3 @@ class Registrazione_esame( db.Model ):
     idR = db.Column(db.Integer, primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
-    
