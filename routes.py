@@ -1,6 +1,9 @@
 import flask
 from flask import Blueprint
-from flask_login import login_required
+from flask_login import login_required, login_user, current_user
+from flask_login import LoginManager  # Import LoginManager here
+
+login_manager = LoginManager()
 
 bp = Blueprint('routes', __name__)
 
@@ -11,7 +14,7 @@ def index():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     from db_setup import Docente
-    from forms import Login_form, login_user
+    from forms import Login_form
     form = Login_form()
     
     if form.validate_on_submit():
@@ -26,11 +29,22 @@ def login():
     
     return flask.render_template('login.html', form=form)
 
-@bp.route('/homepage', methods=['GET', 'POST'])
+@bp.route('/logout')
+@login_required
+def logout():
+    from flask_login import logout_user
+    if current_user.is_authenticated:
+        logout_user()
+    return flask.redirect(flask.url_for('routes.login'))
+
+@bp.route('/homepage')
 @login_required
 def homepage():
-    return flask.render_template('homepage.html')
+    from db_setup import Docente
+    user = Docente.query.get(int(current_user.id))
+    return flask.render_template('homepage.html', user=user)
 
-def load_user(user_id):
-    from db_setup import Docente  # import here to avoid circular import
-    return Docente.query.get(int(user_id))
+@login_manager.user_loader
+def load_user(docente):
+    from db_setup import Docente
+    return Docente.get(docente)
