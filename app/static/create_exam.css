@@ -1,9 +1,13 @@
-#Font{
-    font-family: sans-serif;
+h1{
+    font-family: "serif";
+    font-style: italic;
+    margin:0;
+    padding:0;
 }
 
-input.large {
-    font-family: sans-serif;
+form {
+    font-family: "sans-serif";
 	width: 80%;
-	padding: 1em;
+	padding-left: 30px;
+    font-size: large;
 }
