@@ -12,12 +12,43 @@
     <div class="w3-container w3-orange">
     <h1>Crea Esame</h1>
     </div>
-    <form id="Crea Esame"> 
+    <!-- <form id="Crea Esame"> 
         <p>Si prega di inserire i seguenti dati:</p>
         Nome Esame: <input class="w3-input w3-border" style="width:40%"> <br>
         Id Esame: <input class="w3-input w3-border" style="width:40%"> <br>
         <input type="submit" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="alert('Da implementare!')">
+    </form> -->
+    <form id="Crea Esame"> 
+        <p>Si prega di inserire i seguenti dati:</p>
+        Nome Esame: <input class="w3-input w3-border" style="width:40%"> <br>
+        Id Esame: <input class="w3-input w3-border" style="width:40%"> <br>
+        Tipo di esame:
+        <select class="w3-select w3-border" style="width:40%" onchange="toggleExpireDate()">
+            <option value="esame">Esame</option>
+            <option value="prova">Prova</option>
+        </select>
+        <br>
+        Scegli la data: <input type="datetime-local" class="w3-input w3-border" style="width:40%"> <br>
+        <div id="expire_date" style="display:none">
+            Data di scadenza: <input type="datetime-local" class="w3-input w3-border" style="width:40%"> <br>
+        </div>
+        <input type="submit" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="alert('Da implementare!')">
     </form>
+    
+    <script>
+        function toggleExpireDate() {
+            var tipoEsameSelect = document.querySelector('select[class="w3-select w3-border"]');
+            var expireDateDiv = document.getElementById('expire_date');
+    
+            if (tipoEsameSelect.value === 'prova') {
+                expireDateDiv.style.display = 'block';
+            } else {
+                expireDateDiv.style.display = 'none';
+            }
+        }
+    </script>
+    
+
     <br>
     <br>
     <br>

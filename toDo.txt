@@ -1,9 +1,11 @@
-each webpage needs to have a file for representation
 
-example:
-login needs to be a folder containing backend and frontend
+- login //done
+- exam creation page ( Name of the exma, Exam id which is the course id [CT-...], type of exam, date)
+    if ( exam == test ) -> add expire date
 
-- login //fix the authentication
-- validation page ( for exams and tests )
+    p.s. when selecting the date for the exam in the calendar mark yellow the days and time slots that might cause overlapping
+    with other exams
+- exam list page ( shows all the exams of the same teacher, mark the tests and exams in different colors )
+- evaluation page ( for exams and tests )
 - student page ( in order to see how many exams and tests a student has taken )
 - and maybe more

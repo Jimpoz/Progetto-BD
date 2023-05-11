@@ -52,6 +52,10 @@ def load_user(user_id):
 @bp.route('/create_exam', methods=['GET', 'POST'])
 @login_required
 def create_exam():
+    from db_setup import Esame, db
+    
+    
+    
     return flask.render_template('create_exam.html')
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
