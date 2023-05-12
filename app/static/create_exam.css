@@ -3,6 +3,8 @@ h1{
     font-style: italic;
     margin:0;
     padding:0;
+    position: relative;
+    top: 2px;
 }
 
 form {
@@ -10,4 +12,42 @@ form {
 	width: 80%;
 	padding-left: 30px;
     font-size: large;
+}
+
+li{
+    display:inline; /*mette le scritte vicine*/
+    float:left; /*rende la navbar uniforme, senza separazioni*/
+    border-right: 1px solid rgb(255, 225, 0);
+}
+
+li a{
+    display:block; /*rende la navbar più thick*/
+    text-align: center;
+    padding: 8px; /*separa le scritte*/
+    text-decoration: none;
+}
+
+li a:hover /*passando sopra alla scritta si illumina*/
+{
+    background-color:orangered;
+}
+
+li:last-child {/*rimuove il border dall'ultima selezione*/
+    border-right: none;
+}
+
+.active{/*diventa di quel colore se sono correntemente in quella pagina*/
+    background-color: rgb(209, 23, 23);
+    /*lascio cliccabile la pagina su cui sono?*/
+}
+
+ul{
+    margin:0; /*rimane in cima alla pagine*/
+    padding:0; /*sposta in tutte le direzioni*/
+    overflow:hidden; /*separa la navbar dar resto*/
+    background-color:#ff9500;
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%; 
 }

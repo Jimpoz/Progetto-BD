@@ -9,15 +9,23 @@
     <title>Crea Esame</title>
 </head>
 <body>
-    <div class="w3-container w3-orange">
-    <h1>Crea Esame</h1>
-    </div>
     <!-- <form id="Crea Esame"> 
         <p>Si prega di inserire i seguenti dati:</p>
         Nome Esame: <input class="w3-input w3-border" style="width:40%"> <br>
         Id Esame: <input class="w3-input w3-border" style="width:40%"> <br>
         <input type="submit" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="alert('Da implementare!')">
     </form> -->
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a class="active" href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+    <br>
+    <div class="w3-container w3-orange">
+        <h1>Crea Esame</h1>
+    </div>
+    <div class="w3-container w3-orange"></div>
     <form id="Crea Esame"> 
         <p>Si prega di inserire i seguenti dati:</p>
         Nome Esame: <input class="w3-input w3-border" style="width:40%"> <br>
@@ -49,11 +57,11 @@
     </script>
     
 
-    <br>
+    <!--<br>
     <br>
     <br>
     <div style="position:relative; left:30px">
     <b><a href="{{ url_for('routes.homepage') }}">← Go Back</a></b>
-    </div>
+    </div>-->
 </body>
 </html>
