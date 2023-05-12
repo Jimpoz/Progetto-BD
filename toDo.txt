@@ -1,7 +1,16 @@
 
 - login //done
+
+- homepage:
+    to add: view list of students that are enrolled in the course
+
+    to change: better ui
 - exam creation page ( Name of the exma, Exam id which is the course id [CT-...], type of exam, date)
     if ( exam == test ) -> add expire date
+
+    to add: based on the type of course check whethere the exam session is the first or not
+            amount of exams in that session
+            minimum amount of time from the first call to the second
 
     p.s. when selecting the date for the exam in the calendar mark yellow the days and time slots that might cause overlapping
     with other exams
