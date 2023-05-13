@@ -19,17 +19,39 @@ class Docente(UserMixin, db.Model):
     
     def get_id(self):
            return (self.idD)
+       
+    def __init__(self, idD, nome, cognome, email, password):
+        self.idD = idD
+        self.nome = nome
+        self.cognome = cognome
+        self.email = email
+        self.password = password
     
 class Studente( db.Model):
     idS = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     
+    def __init__(self, idS, nome, cognome):
+        self.idS = idS
+        self.nome = nome
+        self.cognome = cognome
+    
 class Esame( db.Model):
     idE = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     giorno = db.Column(db.Date)
     superato = db.Column(db.Boolean)
+    
+    def __init__( self, idE, nome, giorno, superato ):
+        self.idE = idE
+        self.nome = nome
+        self.giorno = giorno
+        self.superato = superato
+        
+    def add_exam(FlaskForm):
+        idD = HiddenField()
+        
     
 class Prova( db.Model ):
     idP = db.Column(db.Integer, primary_key=True)
@@ -40,6 +62,15 @@ class Prova( db.Model ):
     scadenza = db.Column(db.Date)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     
+    def __init__( self, idP, tipo, superata, tipo_voto, voto, scadenza, idE ):
+        self.idP = idP
+        self.tipo = tipo
+        self.superata = superata
+        self.tipo_voto = tipo_voto
+        self.voto = voto
+        self.scadenza = scadenza
+        self.idE = idE
+    
     
 class Appelli( db.Model ):
     idA = db.Column(db.Integer, primary_key=True, unique = True)
@@ -47,12 +78,28 @@ class Appelli( db.Model ):
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
     
+    def __init__(self, idA, data, idE, idS):
+        self.idA = idA
+        self.data = data
+        self.idE = idE
+        self.idS = idS
+    
 class Creazione_esame( db.Model ):
     idC = db.Column(db.Integer, primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
     
+    def __init__(self, idC, idE, idD):
+        self.idC = idC
+        self.idE = idE
+        self.idD = idD
+    
 class Registrazione_esame( db.Model ):
     idR = db.Column(db.Integer, primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS'))
+    
+    def __init__(self, idR, idE, idS):
+        self.idR = idR
+        self.idE = idE
+        self.idS = idS
