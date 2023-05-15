@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy;
 from flask_login import UserMixin;
 from werkzeug.security import generate_password_hash, check_password_hash
+from alembic import op
 
 db = SQLAlchemy()
 
@@ -43,14 +44,13 @@ class Esame( db.Model):
     giorno = db.Column(db.Date)
     superato = db.Column(db.Boolean)
     
+    #CFU e idD sono stati aggiunti da SQLite
+    
     def __init__( self, idE, nome, giorno, superato ):
         self.idE = idE
         self.nome = nome
         self.giorno = giorno
         self.superato = superato
-        
-    def add_exam(FlaskForm):
-        idD = HiddenField()
         
     
 class Prova( db.Model ):

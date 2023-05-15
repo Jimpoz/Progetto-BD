@@ -1,7 +1,8 @@
 import flask
 from flask import Blueprint
 from flask_login import login_required, login_user, current_user
-from flask_login import LoginManager 
+from flask_login import LoginManager
+from datetime import datetime
 
 login_manager = LoginManager()
 
@@ -16,6 +17,7 @@ def login():
     from db_setup import Docente
     from forms import Login_form
     form = Login_form()
+    current_user = Docente.query.get(int(form.idD.data))
     
     if form.validate_on_submit():
         docente = Docente.query.filter_by(email=form.email.data).first()
@@ -53,7 +55,33 @@ def load_user(user_id):
 @login_required
 def create_exam():
     from db_setup import Esame, db
+    from forms import Add_Exam, Add_Prova, Create_Exam
     
+    create_exam_form = Create_Exam()
+    
+    if(create_exam_form.TipoEsame.data == 'Esame'):
+        form = Add_Exam()
+    else:
+        form = Add_Prova()
+    
+    if form.validate_on_submit():
+        
+        datetime_value = datetime.strptime(form.datetime_field.data, '%Y-%m-%dT%H:%M')
+        cfu_value = int(form.cfu.data)
+        
+        esame = Esame(
+            nome=form.nome.data,
+            CFU= cfu_value,
+            idD=form.idD.data,
+            idE=form.idE.data,
+            time=datetime_value
+        )
+        
+        db.session.add(esame)
+        db.session.commit()
+        #flask.flash('Esame aggiunto con successo.')
+        message = f"L'esame è stato aggiunto con successo."
+        return flask.redirect(flask.url_for('routes.create_exam'), message=message)
     
     
     return flask.render_template('create_exam.html')
