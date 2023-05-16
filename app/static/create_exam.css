@@ -1,53 +1,96 @@
-h1{
-    font-family: "serif";
-    font-style: italic;
-    margin:0;
-    padding:0;
-    position: relative;
-    top: 2px;
-}
+/* CSS for create_exam.html */
 
-form {
-    font-family: "sans-serif";
-	width: 80%;
-	padding-left: 30px;
-    font-size: large;
-}
-
-li{
-    display:inline; /*mette le scritte vicine*/
-    float:left; /*rende la navbar uniforme, senza separazioni*/
-    border-right: 1px solid rgb(255, 225, 0);
-}
-
-li a{
-    display:block; /*rende la navbar più thick*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f8f8f8;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: #333;
     text-align: center;
-    padding: 8px; /*separa le scritte*/
+    padding: 14px 16px;
     text-decoration: none;
-}
-
-li a:hover /*passando sopra alla scritta si illumina*/
-{
-    background-color:orangered;
-}
-
-li:last-child {/*rimuove il border dall'ultima selezione*/
-    border-right: none;
-}
-
-.active{/*diventa di quel colore se sono correntemente in quella pagina*/
-    background-color: rgb(209, 23, 23);
-    /*lascio cliccabile la pagina su cui sono?*/
-}
-
-ul{
-    margin:0; /*rimane in cima alla pagine*/
-    padding:0; /*sposta in tutte le direzioni*/
-    overflow:hidden; /*separa la navbar dar resto*/
-    background-color:#ff9500;
-    position:absolute;
-    top:0px;
-    left:0px;
-    width:100%; 
-}
+  }
+  
+  li a:hover {
+    background-color: #ddd;
+  }
+  
+  .active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .w3-container {
+    padding: 20px;
+  }
+  
+  .w3-orange {
+    background-color: orange;
+    color: white;
+  }
+  
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .w3-label {
+    font-weight: bold;
+  }
+  
+  .w3-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .w3-btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .w3-red {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .w3-red:hover {
+    background-color: #da190b;
+  }
+  
+  .w3-hover-green:hover {
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  
+  .w3-border-black {
+    border: 1px solid black;
+  }
+  
+  #Crea_Esame{
+    margin-top: 0;
+  }

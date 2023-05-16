@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
 from datetime import datetime
@@ -7,17 +7,18 @@ from datetime import datetime
 login_manager = LoginManager()
 
 bp = Blueprint('routes', __name__)
-
+'''
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     return flask.render_template('index.html')
+'''
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
 def login():
     from db_setup import Docente
     from forms import Login_form
+    from flask_login import current_user
     form = Login_form()
-    current_user = Docente.query.get(int(form.idD.data))
     
     if form.validate_on_submit():
         docente = Docente.query.filter_by(email=form.email.data).first()
@@ -55,36 +56,25 @@ def load_user(user_id):
 @login_required
 def create_exam():
     from db_setup import Esame, db
-    from forms import Add_Exam, Add_Prova, Create_Exam
+    from forms import Create_Exam
+    from flask_login import current_user
     
-    create_exam_form = Create_Exam()
-    
-    if(create_exam_form.TipoEsame.data == 'Esame'):
-        form = Add_Exam()
-    else:
-        form = Add_Prova()
+    form = Create_Exam()
     
     if form.validate_on_submit():
-        
-        datetime_value = datetime.strptime(form.datetime_field.data, '%Y-%m-%dT%H:%M')
-        cfu_value = int(form.cfu.data)
-        
-        esame = Esame(
-            nome=form.nome.data,
-            CFU= cfu_value,
-            idD=form.idD.data,
-            idE=form.idE.data,
-            time=datetime_value
-        )
-        
+        idE = form.idE.data
+        nome = form.nome.data
+        anno_accademico = form.anno_accademico.data
+        cfu = form.cfu.data
+        created = datetime.utcnow()
+        esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu, idD=current_user.idD)
         db.session.add(esame)
         db.session.commit()
-        #flask.flash('Esame aggiunto con successo.')
-        message = f"L'esame è stato aggiunto con successo."
-        return flask.redirect(flask.url_for('routes.create_exam'), message=message)
+        
+        
+        return flask.redirect(flask.url_for('routes.create_exam'))
     
-    
-    return flask.render_template('create_exam.html')
+    return flask.render_template('create_exam.html', form=form)
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
 @login_required

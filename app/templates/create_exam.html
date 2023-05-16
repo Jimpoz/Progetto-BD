@@ -15,75 +15,32 @@
         <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
     </ul>
-    <br>
-    <div class="w3-container w3-orange">
+    <div id="Crea_Esame" class="w3-container w3-orange">
         <h1>Crea Esame</h1>
     </div>
     <div class="w3-container w3-orange"></div>
-    <form id="Crea Esame"> 
+    <form id="Crea Esame" method="POST" action="{{ url_for('routes.create_exam') }}"> 
         <p>Si prega di inserire i seguenti dati:</p>
-        Nome Esame: <input class="w3-input w3-border" style="width:40%"> <br>
-        Id Esame: <input class="w3-input w3-border" style="width:40%"> <br>
-        Tipo di esame:
-        <select class="w3-select w3-border" style="width:40%" onchange="toggleExpireDate()" id="tipoEsameSelect">
-            <option value="esame">Esame</option>
-            <option value="prova">Prova</option>
-        </select>
-
-        <div id="TipoProva" style="display: none">
-            Tipo di Prova:
-            <select class="w3-select w3-border" style="width:40%">
-                <option value="Scritto">Scritto</option>
-                <option value="Orale">Orale</option>
-                <option value="Pratico">Pratico</option>
-            </select>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.nome.label(class="w3-label") }}
+            {{ form.nome(class="w3-input w3-border", placeholder="Nome") }}
         </div>
-
-        <br>
-        Scegli la data: <input type="datetime-local" class="w3-input w3-border" style="width:40%"> <br>
-        <div id="expire_date" style="display:none">
-            Data di scadenza: <input type="datetime-local" class="w3-input w3-border" style="width:40%"> <br>
+        <div class="form-group">
+            {{ form.idE.label(class="w3-label") }}
+            {{ form.idE(class="w3-input w3-border", placeholder="Id Esame") }}
         </div>
-        <div id="cfu" style="display: none">
-            CFU:
-            <select class="w3-select w3-border" style="width:40%">
-                <option value="3">3</option>
-                <option value="6">6</option>
-                <option value="12">12</option>
-            </select>
+        <div class="form-group">
+            {{ form.anno_accademico.label(class="w3-label") }}
+            {{ form.anno_accademico(class="w3-input w3-border", placeholder="Anno Accademico") }}
         </div>
-        <br><input type="Submit" value="Crea Esame" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="alert('Da implementare!')"> <br>
+        <div class="form-group">
+            {{ form.cfu.label(class="w3-label") }}
+            {{ form.cfu(class="w3-input w3-border", placeholder="cfu") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+        </div>
     </form>
-    
-    <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
-            toggleExpireDate();
-        });
-    
-        function toggleExpireDate() {
-            var tipoEsameSelect = document.getElementById('tipoEsameSelect');
-            var expireDateDiv = document.getElementById('expire_date');
-            var cfuDiv = document.getElementById('cfu');
-            var tipoProvaDiv = document.getElementById('TipoProva');
-    
-            if (tipoEsameSelect.value === 'prova') {
-                expireDateDiv.style.display = 'block';
-                tipoProvaDiv.style.display = 'block';
-                cfuDiv.style.display = 'none';
-            } else {
-                cfuDiv.style.display = 'block';
-                tipoProvaDiv.style.display = 'none';
-                expireDateDiv.style.display = 'none';
-            }
-        }
-    </script>
-    
-
-    <!--<br>
-    <br>
-    <br>
-    <div style="position:relative; left:30px">
-    <b><a href="{{ url_for('routes.homepage') }}">← Go Back</a></b>
-    </div>-->
 </body>
 </html>

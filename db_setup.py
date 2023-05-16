@@ -41,16 +41,22 @@ class Studente( db.Model):
 class Esame( db.Model):
     idE = db.Column(db.Integer, primary_key=True, unique = True)
     nome = db.Column(db.String(100))
-    giorno = db.Column(db.Date)
-    superato = db.Column(db.Boolean)
+    anno_accademico = db.Column(db.String(100))
+    cfu = db.Column(db.Integer)
+    idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
+    #giorno = db.Column(db.Date) -> cambiato in data_superamento e spostato in un'altra tabella
+    #superato = db.Column(db.Boolean) -> eliminato
+    
+    #aggiunto Anno_accaedemico e CFU
     
     #CFU e idD sono stati aggiunti da SQLite
     
-    def __init__( self, idE, nome, giorno, superato ):
+    def __init__( self, idE, nome, anno_accademico, cfu, idD ):
         self.idE = idE
         self.nome = nome
-        self.giorno = giorno
-        self.superato = superato
+        self.anno_accademico = anno_accademico
+        self.cfu = cfu
+        self.idD = idD
         
     
 class Prova( db.Model ):
