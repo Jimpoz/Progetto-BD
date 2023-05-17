@@ -9,12 +9,21 @@
 </head>
 
 <body>
+    <ul>
+        <li><a class="active" href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+    <div id="Utente" class="w3-container w3-orange">
     <h1>{{ user.nome }} {{ user.cognome }}</h1>
-    
+    </div>
+    <!--
     <div class="button-group">
         <a href="{{ url_for('routes.create_exam') }}" class="button">Crea esame</a>
         <a href="{{ url_for('routes.view_exams') }}" class="button">Visualizza lista esami</a>
     </div>
+    -->
     
     <div class="search-bar">
         <form action="{{ url_for('routes.search_student') }}" method="POST">
@@ -22,6 +31,4 @@
             <input type="submit" value="Cerca">
         </form>
     </div>
-    
-    <a href="{{ url_for('routes.login') }}">Logout</a><br> 
 </body>

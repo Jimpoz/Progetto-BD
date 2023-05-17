@@ -68,8 +68,16 @@ def create_exam():
         cfu = form.cfu.data
         created = datetime.utcnow()
         esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu, idD=current_user.idD)
-        db.session.add(esame)
-        db.session.commit()
+        
+        #if the exam already exists
+        
+        if Esame.query.filter_by(idE=idE).first() is not None:
+            flask.flash('Esame già esistente')
+            return flask.redirect(flask.url_for('routes.create_exam'))
+        else :
+            flask.flash('Esame creato con successo')
+            db.session.add(esame)
+            db.session.commit()
         
         
         return flask.redirect(flask.url_for('routes.create_exam'))
