@@ -87,9 +87,20 @@ def create_exam():
 @bp.route('/view_exams', methods=['GET', 'POST'])
 @login_required
 def view_exams():
-    return flask.render_template('view_exams.html')
+    from db_setup import Esame, Docente
+    lista_esami = Esame.query.filter_by(idD=current_user.idD).all()
+    return flask.render_template('view_exams.html', lista_esami=lista_esami)
 
 @bp.route('/search_student', methods=['GET', 'POST'])
 @login_required
 def search_student():
     return flask.render_template('search_student.html')
+
+@bp.route('/exam_page', methods=['GET', 'POST'])
+@login_required
+def exam_page():
+    from db_setup import Esame, Docente
+    #get the exam id from the url
+    idE = request.args.get('idE')
+    esame = Esame.query.filter_by(idE=idE).first()
+    return flask.render_template('exam_page.html', esame=esame)

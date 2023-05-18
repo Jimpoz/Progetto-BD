@@ -92,3 +92,14 @@ body {
   #Crea_Esame{
     margin-top: 0;
   }
+
+  .exam-grid {
+    width: 200px;
+    height: 200px; 
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/exam.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina Esame</title>
+</head>
+<body>
+    <h1>Informazioni sull'esame del corso:</h1>
+    <div id="ExamDetails">
+        <h2>{{ esame.idE }}</h2>
+        <p>Nome: {{ esame.nome }}</p>
+        <p>Anno Accademico: {{ esame.anno_accademico }}</p>
+        <p>CFU: {{ esame.cfu }}</p>
+    </div>
+
+    <button id="modify_exam" type="button">Modifica esame</button>
+    <button id="delete_exam" type="button">Elimina esame</button>
+
+</body>
+</html>
