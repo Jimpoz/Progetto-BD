@@ -11,7 +11,7 @@ body {
     overflow: hidden;
     background-color: #f8f8f8;
   }
-  
+
   li {
     float: left;
   }
@@ -30,15 +30,6 @@ body {
   
   .active {
     background-color: #4CAF50;
-    color: white;
-  }
-  
-  .w3-container {
-    padding: 0;
-  }
-  
-  .w3-orange {
-    background-color: orange;
     color: white;
   }
   
