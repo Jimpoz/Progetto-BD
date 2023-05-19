@@ -52,10 +52,12 @@ def load_user(user_id):
     from db_setup import Docente
     return Docente.query.get(int(user_id))
 
+
+
 @bp.route('/create_exam', methods=['GET', 'POST'])
 @login_required
 def create_exam():
-    from db_setup import Esame, db
+    from db_setup import Esame,Docente,Creazione_esame, db
     from forms import Create_Exam
     from flask_login import current_user
     
@@ -66,11 +68,9 @@ def create_exam():
         nome = form.nome.data
         anno_accademico = form.anno_accademico.data
         cfu = form.cfu.data
-        created = datetime.utcnow()
-        esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu, idD=current_user.idD)
+        esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu)
         
         #if the exam already exists
-        
         if Esame.query.filter_by(idE=idE).first() is not None:
             flask.flash('Esame già esistente')
             return flask.redirect(flask.url_for('routes.create_exam'))
@@ -78,17 +78,24 @@ def create_exam():
             flask.flash('Esame creato con successo')
             db.session.add(esame)
             db.session.commit()
+            #adding the record of the creation
+            record = Creazione_esame(idE=idE, idD=current_user.idD)
+            db.session.add(record)
+            db.session.commit()
         
         
-        return flask.redirect(flask.url_for('routes.create_exam'))
-    
+        
     return flask.render_template('create_exam.html', form=form)
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
 @login_required
 def view_exams():
-    from db_setup import Esame, Docente
-    lista_esami = Esame.query.filter_by(idD=current_user.idD).all()
+    from db_setup import Esame, Creazione_esame, db
+    #query that checks esame through the idE and the idD in the table Creazione_esame
+    
+    current_user_id = current_user.idD
+    lista_esami = db.session.query(Esame).join(Creazione_esame).filter(Creazione_esame.idD == current_user_id).all()
+    
     return flask.render_template('view_exams.html', lista_esami=lista_esami)
 
 @bp.route('/search_student', methods=['GET', 'POST'])
