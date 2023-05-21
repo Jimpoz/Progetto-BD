@@ -10,6 +10,13 @@
 
 <body>
 
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+
     <!--Al posto di Studente ci va la matricola, da implementare la ricerca-->
     <div id="Matricola" class="w3-container">
         <h1>Studente</h1>
@@ -19,10 +26,5 @@
         <h2>Lista di esami:</h2>
     </div>
     
-    <div class="w3-btn w3-red w3-hover-green w3-border-black">
-        <a href="{{ url_for('routes.homepage') }}">Homepage</a>
-    </div>
-
-
 </body>
 </html>
