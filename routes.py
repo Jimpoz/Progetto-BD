@@ -7,11 +7,6 @@ from datetime import datetime
 login_manager = LoginManager()
 
 bp = Blueprint('routes', __name__)
-'''
-@bp.route('/', methods=['GET', 'POST'])
-def index():
-    return flask.render_template('index.html')
-'''
 
 @bp.route('/', methods=['GET', 'POST'])
 def login():
