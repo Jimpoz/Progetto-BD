@@ -5,9 +5,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>index</title>
+    <title>Area Studente</title>
 </head>
+
 <body>
-    <h1>Lista di esami</h1>
+
+    <!--Al posto di Studente ci va la matricola, da implementare la ricerca-->
+    <div id="Matricola" class="w3-container">
+        <h1>Studente</h1>
+    </div>
+
+    <div id="Lista_Esami" style="position: relative; left: 30px;">
+        <h2>Lista di esami:</h2>
+    </div>
+    
+    <div class="w3-btn w3-red w3-hover-green w3-border-black">
+        <a href="{{ url_for('routes.homepage') }}">Homepage</a>
+    </div>
+
+
 </body>
 </html>

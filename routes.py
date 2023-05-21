@@ -101,7 +101,7 @@ def view_exams():
 @bp.route('/search_student', methods=['GET', 'POST'])
 @login_required
 def search_student():
-    return flask.render_template('search_student.html')
+    return flask.render_template('student.html')
 
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required
