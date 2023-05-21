@@ -52,11 +52,10 @@ li a:hover {
     left:20px;
     background-color: #f8f8f8;
     color: black;
-    border: 1px solid black;
+    border: 1px solid lightgrey;
 }
 
 #button_exam:hover{
-    background-color: grey;
-    color: white;
+    background-color:#ddd;
     transition: background-color 0.3s ease;
 }

@@ -54,3 +54,23 @@ form {
   justify-content: center;
   align-items: center;
 }
+
+.search-bar input[type=text]{
+  padding:6px;
+  font-size: medium;
+}
+
+.search-bar input[type=submit]{
+  float:right;
+  padding: 6px;
+  background: #f8f8f8;
+  border: 1px solid grey;
+  font-size: medium;
+  cursor: pointer;
+  height:35px;
+}
+
+.search-bar input[type=submit]:hover{
+  background-color:#ddd;
+  transition: background-color 0.3s ease;
+}
