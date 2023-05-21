@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/exam.css">
+    <link rel="stylesheet" href="../static/exam_page.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Esame</title>
 </head>
+
 <body>
-    <h1>Informazioni sull'esame del corso:</h1>
-    <div id="ExamDetails">
+
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+
+    <div id="Informazioni" class="w3-container">
+        <h1>Informazioni sull'esame del corso:</h1>
+    </div>
+
+    <div id="Exam_Details">
         <h2>{{ esame.idE }}</h2>
         <p>Nome: {{ esame.nome }}</p>
         <p>Anno Accademico: {{ esame.anno_accademico }}</p>
         <p>CFU: {{ esame.cfu }}</p>
     </div>
 
-    <button id="modify_exam" type="button">Modifica esame</button>
-    <button id="delete_exam" type="button">Elimina esame</button>
+    <button id="button_exam" type="button">Modifica esame</button>
+    <button id="button_exam" type="button">Elimina esame</button>
+
 
 </body>
 </html>
