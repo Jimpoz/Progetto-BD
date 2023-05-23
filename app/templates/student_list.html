@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/exam_page.css">
+    <link rel="stylesheet" href="../static/student.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagina Esame</title>
+    <title>Area Studente</title>
 </head>
 
 <body>
@@ -17,23 +17,19 @@
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
     </ul>
 
-    <div id="Informazioni" class="w3-container">
-        <h1>Informazioni sull'esame del corso:</h1>
+    <div id="Matricola" class="w3-container">
+        <h1>Lista Matricole</h1>
     </div>
-
-    <div id="Exam_Details">
-        <h2>Codice del corso: {{ esame.idE }}</h2>
-        <p>Nome del corso: {{ esame.nome }}</p>
-        <p>Anno Accademico: {{ esame.anno_accademico }}</p>
-        <p>CFU: {{ esame.cfu }}</p>
+    <br>
+    <div id="Lista_Esami" style="position: relative;">
+        {% for studente in lista_studenti %}
+            <div class="student-info">
+                <p>ID: {{ studente.idS }}</p>
+                <p>Nome: {{ studente.nome }}</p>
+                <p>Cognome: {{ studente.cognome }}</p>
+            </div>
+        {% endfor %}
     </div>
-
-    <div id="ListaProve">
-    </div>
-
-    <button id="button_exam" type="button">Modifica esame</button>
-    <button id="button_exam" type="button">Elimina esame</button>
-
-
+    
 </body>
 </html>

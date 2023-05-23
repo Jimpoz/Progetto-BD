@@ -37,3 +37,13 @@ li a {
 li a:hover {
   background-color: #ddd;
 }
+
+.student-info {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .student-info p {
+    margin: 5px 0;
+  }

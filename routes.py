@@ -96,7 +96,24 @@ def view_exams():
 @bp.route('/search_student', methods=['GET', 'POST'])
 @login_required
 def search_student():
-    return flask.render_template('student.html')
+    from db_setup import Studente, Docente, db
+    if request.method == 'POST':
+        search_query = request.form['search']
+        
+        # Query that checks studente through the matricola with the like operator
+        query = db.session.query(Studente).filter(Studente.idS.like('%'+search_query+'%')).all()
+        
+        lista_studenti = query
+        user = Docente.query.get(int(current_user.idD))
+        
+        return flask.render_template('student_list.html', user=user, lista_studenti=lista_studenti)
+    
+    # Fetch all students if it's a GET request
+    lista_studenti = db.session.query(Studente).all()
+    user = Docente.query.get(int(current_user.idD))
+    
+    return flask.render_template('student_list.html', user=user, lista_studenti=lista_studenti)
+
 
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required

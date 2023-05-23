@@ -18,21 +18,94 @@
     </ul>
 
     <div id="Utente" class="w3-container">
-    <h1>{{ user.nome }} {{ user.cognome }}</h1>
+        <h1>{{ user.nome }} {{ user.cognome }}</h1>
     </div>
 
-    <!--
-    <div class="button-group">
-        <a href="{{ url_for('routes.create_exam') }}" class="button">Crea esame</a>
-        <a href="{{ url_for('routes.view_exams') }}" class="button">Visualizza lista esami</a>
-    </div>
-    -->
-    
     <div class="search-bar">
         <form action="{{ url_for('routes.search_student') }}" method="POST">
             <input type="text" name="search" placeholder="Cerca matricola">
             <input type="submit" value="Cerca">
         </form>
     </div>
-    
+
+    <!--
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('form').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = form.serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'json',  // Specify JSON data type for the response
+                success: function(response) {
+                    var resultsContainer = $('.search-results');
+                    resultsContainer.empty();
+
+                    if (response.length > 0) {
+                        var resultList = $('<ul>');
+
+                        $.each(response, function(index, student) {
+                            var listItem = $('<li>');
+                            listItem.append($('<p>').text('ID: ' + student.id));
+                            listItem.append($('<p>').text('Nome: ' + student.nome));
+                            listItem.append($('<p>').text('Cognome: ' + student.cognome));
+
+                            resultList.append(listItem);
+                        });
+
+                        resultsContainer.append($('<h2>').text('Search Results:'));
+                        resultsContainer.append(resultList);
+                    } else {
+                        resultsContainer.append($('<p>').text('No results found.'));
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+        
+        {% if lista_studenti %}
+            <h2>Matricole:</h2>
+            <ul>
+            {% for studente in lista_studenti %}
+                <li>
+                    <p>ID: {{ studente.idS }}</p>
+                    <p>Nome: {{ studente.nome }}</p>
+                    <p>Cognome: {{ studente.cognome }}</p>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('form').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    success: function(response) {
+                        $('#search-results').html(response);
+                    }
+                });
+            });
+        });
+    </script>-->
 </body>
+</html>
