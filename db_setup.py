@@ -60,16 +60,22 @@ class Esame( db.Model):
     
 
 class Prova( db.Model ):
-    idP = db.Column(db.Integer, primary_key=True)
-    tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico'), name='tipo_prova')
+    idP = db.Column(db.String(100), primary_key=True)
+    nome_prova = db.Column(db.String(100))
+    tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico', 'completo'), name='tipo_prova')
     tipo_voto = db.Column(db.String(100))
-    idE = db.Column(db.Integer, db.ForeignKey('esame.idE'))
+    data = db.Column(db.Date)
+    data_scadenza = db.Column(db.Date)
+    idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
+    idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
     
-    def __init__( self, idP, tipo_prova, tipo_voto, idE ):
+    def __init__( self, idP, idE, idD,  nome_prova, tipo_prova, tipo_voto ):
         self.idP = idP
+        self.idE = idE
+        self.idD = idD
+        self.nome_prova = nome_prova
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
-        self.idE = idE
     
     
 # tabella molti a molti
@@ -78,8 +84,8 @@ class Appelli(db.Model):
 
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE', name=None), primary_key=True)
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS', name=None), primary_key=True)
-    data_superamento = db.Column(db.Date)
-    data_scadenza = db.Column(db.Date)
+    #tolto data spostato in prova
+    #data_scadenza = db.Column(db.Date)
     voto = db.Column(db.Integer)
     stato_superamento = db.Column(db.Boolean)
 
@@ -101,13 +107,15 @@ class Creazione_esame(db.Model):
 
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD', name=None), primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE', name=None), primary_key=True)
+    ruolo_docente = db.Column(db.String(100)) 
 
     docente = db.relationship('Docente', backref=db.backref('creazione_esame', cascade='all, delete-orphan'))
     esame = db.relationship('Esame', backref=db.backref('creazione_esame', cascade='all, delete-orphan'))
 
-    def __init__(self, idE, idD):
+    def __init__(self, idE, idD, ruolo_docente):
         self.idE = idE
         self.idD = idD
+        self.ruolo_docente = ruolo_docente
 
 
 # tabella molti a molti

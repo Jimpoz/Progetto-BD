@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/create_exam.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi Prova</title>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a class="active" href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+
+    <div id="Create_Test" class="w3-container">
+        <h1>Aggiungi Prova</h1>
+    </div>
+
+    <form id="create_test" method="POST" action="{{ url_for('routes.create_test', idE=idE) }}">
+        <p>Si prega di inserire i seguenti dati:</p>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.idP.label(class="w3-label") }}
+            {{ form.idP(class="w3-input w3-border", placeholder="Id Prova") }}
+        </div>
+        <div class="form-group">
+            {{ form.nome_prova.label(class="w3-label") }}
+            {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova") }}
+        </div>
+        <div class="form-group">
+            {{ form.tipo_prova.label(class="w3-label") }}
+            {{ form.tipo_prova(class="w3-input w3-border") }}
+        </div>
+        <div class="form-group">
+            {{ form.tipo_voto.label(class="w3-label") }}
+            {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+        </div>
+    </form>
+    
+</body>
+</html>

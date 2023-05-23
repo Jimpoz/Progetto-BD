@@ -76,10 +76,7 @@ def create_exam():
             #adding the record of the creation
             record = Creazione_esame(idE=idE, idD=current_user.idD)
             db.session.add(record)
-            db.session.commit()
-        
-        
-        
+            db.session.commit() 
     return flask.render_template('create_exam.html', form=form)
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
@@ -118,8 +115,51 @@ def search_student():
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required
 def exam_page():
-    from db_setup import Esame, Docente
+    from db_setup import Esame, Docente, Prova, db
     #get the exam id from the url
     idE = request.args.get('idE')
     esame = Esame.query.filter_by(idE=idE).first()
-    return flask.render_template('exam_page.html', esame=esame)
+    
+    #query that returns all of the tests of the exam through the idE and the idD in the table Prova
+    lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
+    
+    return flask.render_template('exam_page.html', esame=esame, lista_prove=lista_prove)
+
+@bp.route('/create_test/<string:idE>', methods=['GET', 'POST'])
+@login_required
+def create_test(idE):
+    from db_setup import Esame, Docente, Prova, db
+    from forms import Create_Test
+    from flask_login import current_user
+    
+    form = Create_Test()
+    
+    if form.validate_on_submit():
+        idP = form.idP.data
+        idD = current_user.idD
+        nome_prova = form.nome_prova.data
+        tipo_prova = form.tipo_prova.data
+        tipo_voto = form.tipo_voto.data
+        
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto)
+        
+        if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
+            flask.flash('Prova già esistente')
+            return flask.redirect(flask.url_for('routes.create_test', form=form, idE=idE))
+        else:
+            try:
+                db.session.add(prova)
+                db.session.commit()
+                print("Prova added successfully")
+            except Exception as e:
+                print("Error committing Prova:", e)
+            
+            return flask.redirect(flask.url_for('routes.create_test',form=form, idE=idE))
+
+    return flask.render_template('create_test.html', form=form, idE=idE)
+    
+    
+@bp.route('/student', methods=['GET', 'POST'])
+@login_required
+def student():
+    from db_setup import Studente,Esame, Prova, db

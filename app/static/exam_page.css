@@ -59,3 +59,9 @@ li a:hover {
     background-color:#ddd;
     transition: background-color 0.3s ease;
 }
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }

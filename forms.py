@@ -27,3 +27,11 @@ class Create_Exam( FlaskForm ):
     cfu = StringField('CFU Esame', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "CFU Esame"})
     created = HiddenField()
     submit = SubmitField('Crea Esame')
+    
+class Create_Test( FlaskForm ):
+    from db_setup import Prova, Docente
+    idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})
+    nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
+    tipo_prova = SelectField('Tipo Prova', choices=[('scritto', 'Scritto'), ('orale', 'Orale'), ('pratico', 'Pratico'), ('completo', 'Completo')], validators=[InputRequired()])
+    tipo_voto = StringField('Tipo Voto', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Tipo Voto"})
+    submit = SubmitField('Crea Prova')
