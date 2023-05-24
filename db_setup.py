@@ -7,7 +7,7 @@ from sqlalchemy import Enum
 db = SQLAlchemy()
 
 class Docente(UserMixin, db.Model):
-    idD = db.Column(db.Integer, primary_key=True, unique = True)
+    idD = db.Column(db.String(100), primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     email = db.Column(db.String(100), unique = True)
@@ -56,8 +56,6 @@ class Esame( db.Model):
         self.nome = nome
         self.anno_accademico = anno_accademico
         self.cfu = cfu
-        
-    
 
 class Prova( db.Model ):
     idP = db.Column(db.String(100), primary_key=True)
@@ -76,7 +74,6 @@ class Prova( db.Model ):
         self.nome_prova = nome_prova
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
-    
     
 # tabella molti a molti
 class Appelli(db.Model):
@@ -100,14 +97,13 @@ class Appelli(db.Model):
         self.voto = voto
         self.stato_superamento = stato_superamento
 
-
 # tabella molti a molti
 class Creazione_esame(db.Model):
     __tablename__ = 'Creazione_esame'
 
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD', name=None), primary_key=True)
     idE = db.Column(db.Integer, db.ForeignKey('esame.idE', name=None), primary_key=True)
-    ruolo_docente = db.Column(db.String(100)) 
+    ruolo_docente = db.Column(Enum('Presidente', 'Membro'))
 
     docente = db.relationship('Docente', backref=db.backref('creazione_esame', cascade='all, delete-orphan'))
     esame = db.relationship('Esame', backref=db.backref('creazione_esame', cascade='all, delete-orphan'))
@@ -116,7 +112,6 @@ class Creazione_esame(db.Model):
         self.idE = idE
         self.idD = idD
         self.ruolo_docente = ruolo_docente
-
 
 # tabella molti a molti
 class Registrazione_esame(db.Model):

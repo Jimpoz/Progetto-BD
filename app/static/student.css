@@ -1,4 +1,5 @@
-#Matricola {
+#Matricola,
+#Docente {
     background-color: orange;
     color: black;
     padding: 20px;
@@ -38,7 +39,8 @@ li a:hover {
   background-color: #ddd;
 }
 
-.student-info {
+.student-info,
+.docente-info {
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 10px;

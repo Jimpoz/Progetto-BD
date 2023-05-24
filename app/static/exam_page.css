@@ -38,7 +38,8 @@ li a:hover {
     background-color: #ddd;
 }
 
-#Exam_Details{
+#Exam_Details,
+#ListaProve{
     position: relative;
     left:20px;
 }
