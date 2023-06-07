@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, redirect, render_template, url_fo
 from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
 from datetime import datetime
+from flask import escape
 
 login_manager = LoginManager()
 
