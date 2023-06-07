@@ -27,6 +27,8 @@
             <p>{{ docente.nome }} {{ docente.cognome }} ({{ role_name }})</p>
         {% endfor %}
         <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE)}}'">Aggiungi membro</button>
+        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE)}}'">Elimina membro</button>
+        
         
         <h2>Codice del corso: {{ esame.idE }}</h2>
         <p>Nome del corso: {{ esame.nome }}</p>
@@ -38,7 +40,7 @@
         <h3>Lista delle prove:</h3>
         <p>
             {% for prova in lista_prove %}
-                {{ prova.nome_prova }}<br>
+                Nome Prova: {{ prova.nome_prova }} in data: {{ prova.data }}<br>
             {% endfor %}
         </p>
     </div>

@@ -71,7 +71,6 @@ def create_exam():
             flask.flash('Esame creato con successo')
             db.session.add(esame)
             db.session.commit()
-            # adding the record of the creation
             record = Creazione_esame(idE=idE, idD=current_user.idD, ruolo_docente='Presidente')
             db.session.add(record)
             db.session.commit()
@@ -83,8 +82,8 @@ def create_exam():
 @login_required
 def view_exams():
     from db_setup import Esame, Creazione_esame, db
-    #query that checks esame through the idE and the idD in the table Creazione_esame
     
+    #query that checks esame through the idE and the idD in the table Creazione_esame
     current_user_id = current_user.idD
     lista_esami = db.session.query(Esame).join(Creazione_esame).filter(Creazione_esame.idD == current_user_id).all()
     
@@ -173,8 +172,11 @@ def create_test(idE):
         nome_prova = form.nome_prova.data
         tipo_prova = form.tipo_prova.data
         tipo_voto = form.tipo_voto.data
+        data = form.data.data
+        data_scadenza = form.data_scadenza.data
+        #da aggiungere data e scadenza
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
@@ -197,16 +199,12 @@ def create_test(idE):
 def get_all_docenti():
     from db_setup import Docente,Esame, db, Creazione_esame
     
-    # get the current user id
     idD = current_user.idD
     
-    # get the exam id from the url
     idE = request.args.get('idE')
 
-    # Query all the Docenti from the database
     docenti = Docente.query.all()
     
-    # get the roles of the professors of the exam
     docenti_roles = (
         db.session.query(Docente, Creazione_esame.ruolo_docente)
         .join(Creazione_esame)
@@ -214,10 +212,7 @@ def get_all_docenti():
         .all()
     )
 
-    # Create a list of dictionaries containing the relevant attributes
     docenti_data = [{'idD': docente.idD, 'nome': docente.nome, 'cognome': docente.cognome} for docente in docenti]
-
-    # Return the list of Docenti as JSON
     #return jsonify(docenti_data)
 
     return flask.render_template('docenti_list.html', docenti_data=docenti_data, docenti_roles=docenti_roles, idE=idE)

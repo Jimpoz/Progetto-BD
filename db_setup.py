@@ -67,13 +67,15 @@ class Prova( db.Model ):
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
     
-    def __init__( self, idP, idE, idD,  nome_prova, tipo_prova, tipo_voto ):
+    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, data, data_scadenza):
         self.idP = idP
         self.idE = idE
         self.idD = idD
         self.nome_prova = nome_prova
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
+        self.data = data
+        self.data_scadenza = data_scadenza
     
 # tabella molti a molti
 class Appelli(db.Model):
