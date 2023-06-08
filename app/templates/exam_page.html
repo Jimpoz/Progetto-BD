@@ -43,6 +43,8 @@
                 <tr>
                     <th>Nome Prova</th>
                     <th>Data</th>
+                    <th>Ora</th>
+                    <th>Scadenza</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,7 +52,8 @@
                     <tr>
                         <td>{{ prova.nome_prova }}</td>
                         <td>{{ prova.data }}</td>
-                        <!--<td>{{ prova.hour }}</td>!-->
+                        <td>{{ prova.data }}</td>
+                        <td>{{ prova.data_scadenza}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
