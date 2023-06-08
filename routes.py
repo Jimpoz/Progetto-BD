@@ -17,7 +17,7 @@ def login():
     form = Login_form()
     
     if form.validate_on_submit():
-        docente = Docente.query.filter_by(email=form.email.data).first()
+        docente = Docente.query.filter_by(email=form.email.data).first() #parametrizzato
         if docente is not None and docente.check_password(form.password.data):
             flask.flash('Logged in successfully.')
             login_user(docente)
@@ -175,7 +175,6 @@ def create_test(idE):
         tipo_voto = form.tipo_voto.data
         data = form.data.data
         data_scadenza = form.data_scadenza.data
-        #da aggiungere data e scadenza
         
         prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, data_scadenza=data_scadenza)
         
