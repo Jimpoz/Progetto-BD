@@ -35,18 +35,14 @@
             </div>
         {% endfor %}
     </div>
-    
-    
 
     <script>
         function addRow(docenteId, examId) {
-            // Create the request body
             var requestBody = {
                 docenteId: docenteId,
                 examId: examId
             };
         
-            // Send a POST request to the server to add the row
             fetch('/add_row', {
                 method: 'POST',
                 headers: {
@@ -56,13 +52,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Handle the response if needed
                 console.log(data);
-                // Add the row to the table on success
                 if (data.message === 'Row added successfully') {
                     addTableRow(docenteId, examId, 'Membro');
-                    // Redirect to the exam_page.html with the examId parameter
-                    // window.location.href = '/exam_page?examId=' + examId;
                 }
             })
             .catch(error => {
@@ -72,23 +64,20 @@
         
     
         function addTableRow(docenteId, examId, ruolo) {
-            // Create a new row
             var newRow = document.createElement('tr');
-            // Create cells for the row
             var idCell = document.createElement('td');
             idCell.textContent = docenteId;
             var examIdCell = document.createElement('td');
             examIdCell.textContent = examId;
             var ruoloCell = document.createElement('td');
             ruoloCell.textContent = ruolo;
-            // Append cells to the row
             newRow.appendChild(idCell);
             newRow.appendChild(examIdCell);
             newRow.appendChild(ruoloCell);
-            // Append the row to the table body
             var tableBody = document.getElementById('membro_table_body');
             tableBody.appendChild(newRow);
         }
+
     </script>
     
 </body>

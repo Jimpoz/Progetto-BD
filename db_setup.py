@@ -63,11 +63,12 @@ class Prova( db.Model ):
     tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico', 'completo'), name='tipo_prova')
     tipo_voto = db.Column(db.String(100))
     data = db.Column(db.Date)
+    ora_prova = db.Column(db.Integer)
     data_scadenza = db.Column(db.Date)
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
     
-    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, data, data_scadenza):
+    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, data, ora_prova, data_scadenza):
         self.idP = idP
         self.idE = idE
         self.idD = idD
@@ -75,6 +76,7 @@ class Prova( db.Model ):
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
         self.data = data
+        self.ora_prova = ora_prova
         self.data_scadenza = data_scadenza
     
 # tabella molti a molti

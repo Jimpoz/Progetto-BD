@@ -174,9 +174,10 @@ def create_test(idE):
         tipo_prova = form.tipo_prova.data
         tipo_voto = form.tipo_voto.data
         data = form.data.data
+        ora_prova = form.ora_prova.data
         data_scadenza = form.data_scadenza.data
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, data_scadenza=data_scadenza)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
@@ -222,13 +223,10 @@ def get_all_docenti():
 def get_role():
     from db_setup import Creazione_esame, db
     
-    # Get the current user id
     idD = current_user.idD
     
-    # Get the exam id from the URL
     idE = request.args.get('idE')
     
-    # Query the Creazione_esame table to retrieve the ruolo_docente
     ruolo_docente = Creazione_esame.query.filter(Creazione_esame.idD == idD, Creazione_esame.idE == idE).first()
     
     return jsonify(ruolo_docente.ruolo_docente)
@@ -239,18 +237,37 @@ def get_role():
 def add_row():
     from db_setup import Creazione_esame, db
     
-    # Get the data from the request body
     data = request.get_json()
     docente_id = data['docenteId']
     exam_id = data['examId']
     
-    # Create a new row in the Creazione_esame table
     creazione_esame = Creazione_esame(idD=docente_id, idE=exam_id, ruolo_docente='Membro')
     db.session.add(creazione_esame)
     db.session.commit()
     
-    # Redirect to the exam_page.html
     return redirect(url_for('routes.exam_page', idE=exam_id))
+
+
+@bp.route('/delete_row', methods=['POST'])
+@login_required
+def delete_row():
+    from db_setup import Creazione_esame, db
+
+    data = request.get_json()
+    docente_id = data['docenteId']
+    exam_id = data['examId']
+
+    creazione_esame = Creazione_esame.query.filter_by(idD=docente_id, idE=exam_id).first()
+
+    if creazione_esame:
+        db.session.delete(creazione_esame)
+        db.session.commit()
+        return jsonify({'message': 'Row deleted successfully'})
+    else:
+        return jsonify({'message': 'Row not found'})
+
+    return redirect(url_for('routes.exam_page', idE=exam_id))
+
 
 #da finire
 @bp.route('/student', methods=['GET', 'POST'])

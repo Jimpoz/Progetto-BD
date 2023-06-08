@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, Email
 from flask_bcrypt import Bcrypt
-from wtforms import HiddenField, StringField, SelectField, SubmitField, DateField
+from wtforms import HiddenField, StringField, SelectField, SubmitField, DateField, TimeField
 
 class Login_form( FlaskForm ):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
@@ -29,12 +29,12 @@ class Create_Exam( FlaskForm ):
     submit = SubmitField('Crea Esame')
     
 #da aggiungere le date della prova (data di scadenza e data della prova stessa)
-class Create_Test( FlaskForm ):
-    from db_setup import Prova, Docente
+class Create_Test(FlaskForm):
     idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})
     nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
     tipo_prova = SelectField('Tipo Prova', choices=[('scritto', 'Scritto'), ('orale', 'Orale'), ('pratico', 'Pratico'), ('completo', 'Completo')], validators=[InputRequired()])
     tipo_voto = StringField('Tipo Voto', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Tipo Voto"})
     data = DateField('Data', validators=[InputRequired()], format='%Y-%m-%d')
+    ora_prova = TimeField('Ora prova', validators=[InputRequired()], format='%H:%M')
     data_scadenza = DateField('Data Scadenza', validators=[InputRequired()], format='%Y-%m-%d')
     submit = SubmitField('Crea Prova')
