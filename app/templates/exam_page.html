@@ -50,39 +50,19 @@
                     <tr>
                         <td>{{ prova.nome_prova }}</td>
                         <td>{{ prova.data }}</td>
+                        <!--<td>{{ prova.hour }}</td>!-->
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    <style>
-        #ListaProve table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-    
-        #ListaProve th,
-        #ListaProve td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-    
-        #ListaProve th {
-            background-color: #f2f2f2;
-        }
-    
-        #ListaProve tr:hover {
-            background-color: #f5f5f5;
-        }
-    </style>
-    
     
     <br>
     <div class="button-container">
         <button id="button_exam" type="button">Modifica esame</button>
         <button id="button_exam" type="button">Elimina esame</button>
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'">Aggiungi prova</button>
+        <button id="button_exam" type="button">Elimina prova</button>
     </div>
 </body>
 </html>
