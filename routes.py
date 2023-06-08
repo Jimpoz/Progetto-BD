@@ -175,9 +175,10 @@ def create_test(idE):
         tipo_voto = form.tipo_voto.data
         data = form.data.data
         ora_prova = form.ora_prova.data
+        ora_prova_int = ora_prova.hour * 100 + ora_prova.minute
         data_scadenza = form.data_scadenza.data
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova, data_scadenza=data_scadenza)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova_int, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
