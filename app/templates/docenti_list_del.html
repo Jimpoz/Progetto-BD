@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/student.css">
+    <link rel="stylesheet" href="../static/goback.css">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +25,7 @@
     <br>
     <div id="Lista_docenti" style="position: relative;">
         {% for docente in lista_docenti %}
-            <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}')" style="cursor: pointer;">
+            <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}'); window.location.href='{{ url_for('routes.exam_page', idE=esame.idE) }}'" style="cursor: pointer;">
                 <p>ID: {{ docente.idD }}</p>
                 <p>Nome: {{ docente.nome }}</p>
                 <p>Cognome: {{ docente.cognome }}</p>
@@ -77,6 +79,7 @@
         }
     </script>
     
+    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
 </body>
 
 </html>
