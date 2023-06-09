@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/exam_page.css">
+    <link rel="stylesheet" href="../static/goback.css">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,8 +28,8 @@
         {% for docente, role_name in docenti_roles %}
             <p>{{ docente.nome }} {{ docente.cognome }} ({{ role_name }})</p>
         {% endfor %}
-        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE)}}'">Aggiungi membro</button>
-        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE)}}'">Elimina membro</button>
+        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
+        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
         
         
         <h2>Codice del corso: {{ esame.idE }}</h2>
@@ -49,10 +51,10 @@
             </thead>
             <tbody>
                 {% for prova in lista_prove %}
-                    <tr>
+                    <tr onclick="window.location.href='{{url_for('routes.prova_page', idP=prova.idP)}}'">
                         <td>{{ prova.nome_prova }}</td>
                         <td>{{ prova.data }}</td>
-                        <td>{{ prova.data }}</td>
+                        <td>{{ prova.ora_prova }}</td>
                         <td>{{ prova.data_scadenza}}</td>
                     </tr>
                 {% endfor %}
@@ -67,5 +69,6 @@
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'">Aggiungi prova</button>
         <button id="button_exam" type="button">Elimina prova</button>
     </div>
+    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
 </body>
 </html>

@@ -63,7 +63,7 @@ class Prova( db.Model ):
     tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico', 'completo'), name='tipo_prova')
     tipo_voto = db.Column(db.String(100))
     data = db.Column(db.Date)
-    ora_prova = db.Column(db.Integer)
+    ora_prova = db.Column(db.String(100))
     data_scadenza = db.Column(db.Date)
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))

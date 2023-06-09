@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/exam_page.css">
+    <link rel="stylesheet" href="../static/goback.css">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="index.css" rel="stylesheet">
+    <title>Login page</title>
+</head>
+
+<body>
+    <h1> Informazioni sulla prova </h1>
+    <h2> Nome della prova: {{ prova.nome_prova }}</h2>
+    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+</body>

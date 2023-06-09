@@ -129,6 +129,24 @@ def docenti_list():
 
     return flask.render_template('docenti_list.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli)
 
+@bp.route('/docenti_list_del', methods=['GET', 'POST'])
+@login_required
+def docenti_list_del():
+    from db_setup import Docente, Esame, db, Creazione_esame
+    # Get the exam id from the URL
+    idE = request.args.get('idE')
+    esame = db.session.query(Esame).filter(Esame.idE == idE).first()
+    lista_docenti = db.session.query(Docente).all()
+
+    # Fetch the roles of the professors for the specific exam
+    lista_ruoli = (
+        db.session.query(Creazione_esame.idD, Creazione_esame.ruolo_docente)
+        .filter(Creazione_esame.idE == idE)
+        .all()
+    )
+
+    return flask.render_template('docenti_list_del.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli)
+
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required
 def exam_page():
@@ -175,10 +193,10 @@ def create_test(idE):
         tipo_voto = form.tipo_voto.data
         data = form.data.data
         ora_prova = form.ora_prova.data
-        ora_prova_int = ora_prova.hour * 100 + ora_prova.minute
+        ora_prova_string = ora_prova.strftime('%H:%M')
         data_scadenza = form.data_scadenza.data
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova_int, data_scadenza=data_scadenza)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova_string, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
@@ -246,7 +264,8 @@ def add_row():
     db.session.add(creazione_esame)
     db.session.commit()
     
-    return redirect(url_for('routes.exam_page', idE=exam_id))
+    #return redirect(url_for('routes.exam_page', idE=exam_id))
+    return flask.render_template('exam_page.html', idE = exam_id)
 
 
 @bp.route('/delete_row', methods=['POST'])
@@ -263,12 +282,24 @@ def delete_row():
     if creazione_esame:
         db.session.delete(creazione_esame)
         db.session.commit()
-        return jsonify({'message': 'Row deleted successfully'})
+        flask.flash('Eliminato correttamente')
+        #return redirect(url_for('routes.exam_page', idE=exam_id))
+        return flask.render_template('exam_page.html', idE = exam_id)
     else:
-        return jsonify({'message': 'Row not found'})
+        #return redirect(url_for('routes.docenti_list_del', idE=exam_id))
+        return flask.render_template('docenti_list_del.html', idE = exam_id)
 
-    return redirect(url_for('routes.exam_page', idE=exam_id))
+    
 
+@bp.route('/prova_page', methods=['GET'])
+@login_required
+def prova_page():
+    from db_setup import Prova, Studente, Docente, Appelli
+    
+    idP = request.args.get('idP')
+    prova = Prova.query.filter_by(idP=idP).first()
+    
+    return flask.render_template('prova_page.html', idP = idP, prova=prova)
 
 #da finire
 @bp.route('/student', methods=['GET', 'POST'])

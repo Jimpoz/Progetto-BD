@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/student.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Studente</title>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+
+    <div id="Docente" class="w3-container">
+        <h1>Lista Docenti</h1>
+    </div>
+    <br>
+    <div id="Lista_docenti" style="position: relative;">
+        {% for docente in lista_docenti %}
+            <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}')" style="cursor: pointer;">
+                <p>ID: {{ docente.idD }}</p>
+                <p>Nome: {{ docente.nome }}</p>
+                <p>Cognome: {{ docente.cognome }}</p>
+                {% for ruolo in lista_ruoli %}
+                    {% if ruolo[0] == docente.idD %}
+                        <p>Ruolo: {{ ruolo[1] }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function deleteRow(docenteId, examId) {
+            var requestBody = {
+                docenteId: docenteId,
+                examId: examId
+            };
+        
+            fetch('/delete_row', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.message === 'Row deleted successfully') {
+                    removeTableRow(docenteId, examId);
+                }
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        }
+
+        function removeTableRow(docenteId, examId) {
+            var tableBody = document.getElementById('membro_table_body');
+            var rows = tableBody.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var idCell = row.getElementsByTagName('td')[0];
+                var examIdCell = row.getElementsByTagName('td')[1];
+                if (idCell.textContent === docenteId && examIdCell.textContent === examId) {
+                    tableBody.removeChild(row);
+                    break;
+                }
+            }
+        }
+    </script>
+    
+</body>
+
+</html>
