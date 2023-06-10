@@ -28,7 +28,6 @@ class Create_Exam( FlaskForm ):
     created = HiddenField()
     submit = SubmitField('Crea Esame')
     
-#da aggiungere le date della prova (data di scadenza e data della prova stessa)
 class Create_Test(FlaskForm):
     idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})
     nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})

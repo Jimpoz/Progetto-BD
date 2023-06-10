@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/exam_page.css">
@@ -9,11 +8,52 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="index.css" rel="stylesheet">
-    <title>Login page</title>
+    <title>Pagina Prova</title>
 </head>
 
 <body>
-    <h1> Informazioni sulla prova </h1>
-    <h2> Nome della prova: {{ prova.nome_prova }}</h2>
+
+    <ul>
+        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    </ul>
+
+    <div id="Informazioni" class="w3-container">
+        <h1> Informazioni sulla prova </h1>
+    </div>
+
+    <div id="Test_Details">
+        <h2> Nome della prova: {{ prova.nome_prova }}</h2>
+        <p>Id Prova: {{ prova.idP }}</p>
+        <p>Tipo Prova: {{ prova.tipo_prova }}</p>
+        <p>Tipo Voto: {{ prova.tipo_voto }}</p>
+        <p>Data e Ora della Prova: {{ prova.data }} {{ prova.ora_prova }} </p>
+        <p> Data di Scadenza della Prova: {{ prova.data_scadenza }} </p>
+    </div>
+
+    <div id="ListaStudentiIscritti">
+        <h3>Lista degli Studenti iscritti:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Matricola</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Manca la lista corretta-->
+                {% for studente in lista_studenti %}
+                    <td>ID: {{ studente.idS }}</td>
+                    <td>Nome: {{ studente.nome }}</td>
+                    <td>Cognome: {{ studente.cognome }}</td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
     <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
 </body>

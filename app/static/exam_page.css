@@ -39,7 +39,9 @@ li a:hover {
 }
 
 #Exam_Details, 
-#ListaProve
+#ListaProve,
+#Test_Details,
+#ListaStudentiIscritti
 {
     position: relative;
     left:20px;
