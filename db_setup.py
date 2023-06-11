@@ -84,23 +84,19 @@ class Prova( db.Model ):
 class Appelli(db.Model):
     __tablename__ = 'Appelli'
 
-    #idP = db.Column(db.String(100), db.ForeignKey('prova.idP', name=None), primary_key=True)
-    idE = db.Column(db.String(100), db.ForeignKey('esame.idE', name=None), primary_key=True)
+    idP = db.Column(db.String(100), db.ForeignKey('prova.idP', name=None), primary_key=True)
+    #idE = db.Column(db.String(100), db.ForeignKey('esame.idE', name=None), primary_key=True)
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS', name=None), primary_key=True)
-    #tolto data spostato in prova
-    #data_scadenza = db.Column(db.Date)
     voto = db.Column(db.Integer)
     stato_superamento = db.Column(db.Boolean)
 
-    #prova = db.relationship('Prova', backref=db.backref('appelli', cascade='all, delete-orphan'))
-    esame = db.relationship('Esame', backref=db.backref('appelli', cascade='all, delete-orphan'))
+    prova = db.relationship('Prova', backref=db.backref('appelli', cascade='all, delete-orphan'))
+    #esame = db.relationship('Esame', backref=db.backref('appelli', cascade='all, delete-orphan'))
     studente = db.relationship('Studente', backref=db.backref('appelli', cascade='all, delete-orphan'))
 
-    def __init__(self, idE, idS, data_superamento=None, data_scadenza=None, voto=None, stato_superamento=None):
-        self.idE = idE
+    def __init__(self, idP, idS, voto, stato_superamento):
+        self.idP = idP
         self.idS = idS
-        self.data_superamento = data_superamento
-        self.data_scadenza = data_scadenza
         self.voto = voto
         self.stato_superamento = stato_superamento
 

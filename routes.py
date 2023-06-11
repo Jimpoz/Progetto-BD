@@ -310,8 +310,7 @@ def prova_page():
     lista_studenti = (
         db.session.query(Studente)
         .join(Appelli)
-        .join(Esame)
-        .filter(Esame.idE == prova.idE)
+        .filter(Appelli.idP == idP)
         .all()
     )
     
@@ -326,9 +325,9 @@ def student_page(idS):
     
     lista_esami = (
         db.session.query(Esame)
+        .join(Prova, Esame.idE == Prova.idE)
         .join(Appelli)
-        .join(Prova)
-        .filter(Appelli.idS == studente.idS, Prova.idE == Esame.idE)
+        .filter(Appelli.idS == idS, Appelli.idP == Prova.idP)
         .all()
     )
 
