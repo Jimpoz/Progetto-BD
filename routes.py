@@ -283,10 +283,8 @@ def delete_row():
         db.session.delete(creazione_esame)
         db.session.commit()
         flask.flash('Eliminato correttamente')
-        #return redirect(url_for('routes.exam_page', idE=exam_id))
         return flask.render_template('exam_page.html', idE = exam_id)
     else:
-        #return redirect(url_for('routes.docenti_list_del', idE=exam_id))
         return flask.render_template('docenti_list_del.html', idE = exam_id)
 
     
@@ -294,12 +292,19 @@ def delete_row():
 @bp.route('/prova_page', methods=['GET'])
 @login_required
 def prova_page():
-    from db_setup import Prova, Studente, Docente, Appelli
+    from db_setup import Prova, Studente, Docente, Appelli, db, Esame
     
     idP = request.args.get('idP')
     prova = Prova.query.filter_by(idP=idP).first()
+    lista_studenti = (
+        db.session.query(Studente)
+        .join(Appelli)
+        .join(Esame)
+        .filter(Esame.idE == prova.idE)
+        .all()
+    )
     
-    return flask.render_template('prova_page.html', idP = idP, prova=prova)
+    return flask.render_template('prova_page.html', idP=idP, prova=prova, lista_studenti=lista_studenti)
 
 #da finire
 @bp.route('/student', methods=['GET', 'POST'])

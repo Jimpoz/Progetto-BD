@@ -44,13 +44,15 @@
                 </tr>
             </thead>
             <tbody>
-                <!--Manca la lista corretta-->
                 {% for studente in lista_studenti %}
-                    <td>ID: {{ studente.idS }}</td>
-                    <td>Nome: {{ studente.nome }}</td>
-                    <td>Cognome: {{ studente.cognome }}</td>
+                <tr>
+                    <td> {{ studente.idS }}</td>
+                    <td> {{ studente.nome }}</td>
+                    <td> {{ studente.cognome }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
+            
         </table>
     </div>
 

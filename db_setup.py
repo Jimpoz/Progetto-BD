@@ -40,7 +40,7 @@ class Studente( db.Model):
         self.cognome = cognome
     
 class Esame( db.Model):
-    idE = db.Column(db.Integer, primary_key=True, unique = True)
+    idE = db.Column(db.String(100), primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     anno_accademico = db.Column(db.String(100))
     cfu = db.Column(db.Integer)
@@ -51,7 +51,8 @@ class Esame( db.Model):
     
     #CFU e idD sono stati aggiunti da SQLite
     
-    def __init__( self, idE, nome, anno_accademico, cfu ):
+    #aggiunto idP della prova ad un esame
+    def __init__( self, idE, idP, nome, anno_accademico, cfu ):
         self.idE = idE
         self.nome = nome
         self.anno_accademico = anno_accademico
