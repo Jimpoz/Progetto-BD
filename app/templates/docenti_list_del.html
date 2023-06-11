@@ -25,16 +25,18 @@
     <br>
     <div id="Lista_docenti" style="position: relative;">
         {% for docente in lista_docenti %}
-            <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}'); window.location.href='{{ url_for('routes.exam_page', idE=esame.idE) }}'" style="cursor: pointer;">
-                <p>ID: {{ docente.idD }}</p>
-                <p>Nome: {{ docente.nome }}</p>
-                <p>Cognome: {{ docente.cognome }}</p>
-                {% for ruolo in lista_ruoli %}
-                    {% if ruolo[0] == docente.idD %}
-                        <p>Ruolo: {{ ruolo[1] }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
+            {% if docente.idD != current_user_id %}
+                <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}'); window.location.href='{{ url_for('routes.exam_page', idE=esame.idE) }}'" style="cursor: pointer;">
+                    <p>ID: {{ docente.idD }}</p>
+                    <p>Nome: {{ docente.nome }}</p>
+                    <p>Cognome: {{ docente.cognome }}</p>
+                    {% for ruolo in lista_ruoli %}
+                        {% if ruolo[0] == docente.idD %}
+                            <p>Ruolo: {{ ruolo[1] }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 

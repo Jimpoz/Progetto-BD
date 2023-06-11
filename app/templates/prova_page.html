@@ -45,7 +45,7 @@
             </thead>
             <tbody>
                 {% for studente in lista_studenti %}
-                <tr>
+                <tr onclick="window.location.href='{{url_for('routes.student_page', idS=studente.idS)}}'">
                     <td> {{ studente.idS }}</td>
                     <td> {{ studente.nome }}</td>
                     <td> {{ studente.cognome }}</td>

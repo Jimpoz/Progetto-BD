@@ -52,7 +52,7 @@ class Esame( db.Model):
     #CFU e idD sono stati aggiunti da SQLite
     
     #aggiunto idP della prova ad un esame
-    def __init__( self, idE, idP, nome, anno_accademico, cfu ):
+    def __init__( self, idE, nome, anno_accademico, cfu ):
         self.idE = idE
         self.nome = nome
         self.anno_accademico = anno_accademico
@@ -84,13 +84,15 @@ class Prova( db.Model ):
 class Appelli(db.Model):
     __tablename__ = 'Appelli'
 
-    idE = db.Column(db.Integer, db.ForeignKey('esame.idE', name=None), primary_key=True)
+    #idP = db.Column(db.String(100), db.ForeignKey('prova.idP', name=None), primary_key=True)
+    idE = db.Column(db.String(100), db.ForeignKey('esame.idE', name=None), primary_key=True)
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS', name=None), primary_key=True)
     #tolto data spostato in prova
     #data_scadenza = db.Column(db.Date)
     voto = db.Column(db.Integer)
     stato_superamento = db.Column(db.Boolean)
 
+    #prova = db.relationship('Prova', backref=db.backref('appelli', cascade='all, delete-orphan'))
     esame = db.relationship('Esame', backref=db.backref('appelli', cascade='all, delete-orphan'))
     studente = db.relationship('Studente', backref=db.backref('appelli', cascade='all, delete-orphan'))
 

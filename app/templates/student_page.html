@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='student_page.css') }}">
+    <link rel="stylesheet" href="../static/goback.css">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='goback.css') }}">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagine studente</title>
+</head>
+
+<body>
+    <h1>Informazioni sullo studente</h1>
+    <p>Nome: {{ studente.nome }}</p>
+    <p>Cognome: {{ studente.cognome }}</p>
+    <p>Matricola: {{ studente.idS }}</p>
+
+    <h2>Lista esami iscritti</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome Esame</th>
+                <th>Anno Accademico</th>
+                <th>CFU</th>
+                <th> Appello </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for esame in lista_esami %}
+                <tr>
+                    <td>{{ esame.nome }}</td>
+                    <td>{{ esame.anno_accademico }}</td>
+                    <td>{{ esame.cfu }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+</body>
+</html>

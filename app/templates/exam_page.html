@@ -28,9 +28,12 @@
         {% for docente, role_name in docenti_roles %}
             <p>{{ docente.nome }} {{ docente.cognome }} ({{ role_name }})</p>
         {% endfor %}
-        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
-        <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
         
+        {% if user_role == "Presidente" %}
+            <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
+            <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
+        {% endif %}
+
         
         <h2>Codice del corso: {{ esame.idE }}</h2>
         <p>Nome del corso: {{ esame.nome }}</p>

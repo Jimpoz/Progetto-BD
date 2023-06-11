@@ -127,7 +127,9 @@ def docenti_list():
         .all()
     )
 
-    return flask.render_template('docenti_list.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli)
+    current_user_id = current_user.idD
+
+    return flask.render_template('docenti_list.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
 
 @bp.route('/docenti_list_del', methods=['GET', 'POST'])
 @login_required
@@ -144,8 +146,10 @@ def docenti_list_del():
         .filter(Creazione_esame.idE == idE)
         .all()
     )
+    
+    current_user_id = current_user.idD
 
-    return flask.render_template('docenti_list_del.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli)
+    return flask.render_template('docenti_list_del.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
 
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required
@@ -167,7 +171,14 @@ def exam_page():
         .all()
     )
     
-    return flask.render_template('exam_page.html', esame=esame, lista_prove=lista_prove, lista_docenti=lista_docenti, docenti_roles=docenti_roles)
+    user_role = (
+        db.session.query(Creazione_esame.ruolo_docente)
+        .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
+        .scalar()
+    )
+        
+    
+    return flask.render_template('exam_page.html', esame=esame, lista_prove=lista_prove, lista_docenti=lista_docenti, docenti_roles=docenti_roles, user_role=user_role)
 
 @bp.route('/redirect_to_exam_page', methods=['GET'])
 @login_required
@@ -306,8 +317,19 @@ def prova_page():
     
     return flask.render_template('prova_page.html', idP=idP, prova=prova, lista_studenti=lista_studenti)
 
-#da finire
-@bp.route('/student', methods=['GET', 'POST'])
+@bp.route('/student_page/<int:idS>', methods=['GET'])
 @login_required
-def student():
-    from db_setup import Studente,Esame, Prova, db
+def student_page(idS):
+    from db_setup import Studente, Esame, Prova, db, Appelli
+    
+    studente = db.session.query(Studente).filter_by(idS=idS).first()
+    
+    lista_esami = (
+        db.session.query(Esame)
+        .join(Appelli)
+        .join(Prova)
+        .filter(Appelli.idS == studente.idS, Prova.idE == Esame.idE)
+        .all()
+    )
+
+    return flask.render_template('student_page.html', studente=studente, lista_esami=lista_esami)
