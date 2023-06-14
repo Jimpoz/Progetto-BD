@@ -8,6 +8,7 @@ def create_app():
     from db_setup import db
     app = Flask(__name__)
     login_manager.init_app(app)
+    login_manager.login_view = 'routes.login'
     app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(app.root_path, 'database.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

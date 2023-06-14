@@ -13,28 +13,43 @@ bp = Blueprint('routes', __name__)
 def login():
     from db_setup import Docente
     from forms import Login_form
-    from flask_login import current_user
+    from flask_login import current_user, logout_user
     form = Login_form()
-    
+
+    if current_user.is_authenticated:
+        logout_user()
+        flask.session.clear()
+
     if form.validate_on_submit():
-        docente = Docente.query.filter_by(email=form.email.data).first() #parametrizzato
+        docente = Docente.query.filter_by(email=form.email.data).first()  # parametrizzato
         if docente is not None and docente.check_password(form.password.data):
             flask.flash('Logged in successfully.')
             login_user(docente)
             return flask.redirect(flask.url_for('routes.homepage'))
-        else :
+        else:
             flask.flash('Invalid username or password.')
             return flask.redirect(flask.url_for('routes.login'))
-    
+
+    if flask.request.referrer and 'logout' in flask.request.referrer:
+        flask.flash('You need to log in to access this page.')  # Display an error message
+        return flask.redirect(flask.url_for('routes.login'))
+
     return flask.render_template('login.html', form=form)
 
 @bp.route('/logout')
 @login_required
 def logout():
     from flask_login import logout_user
+
     if current_user.is_authenticated:
         logout_user()
-    return flask.redirect(flask.url_for('routes.login'))
+
+    response = flask.redirect(flask.url_for('routes.login'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 
 @bp.route('/homepage')
 @login_required
@@ -54,8 +69,10 @@ def create_exam():
     from db_setup import Esame, Docente, Creazione_esame, db
     from forms import Create_Exam
     from flask_login import current_user
+    import flask
     
     form = Create_Exam()
+    show_popup = False
     
     if form.validate_on_submit():
         idE = form.idE.data
@@ -64,19 +81,20 @@ def create_exam():
         cfu = form.cfu.data
         esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu)
         
-        # if the exam already exists
         if Esame.query.filter_by(idE=idE).first() is not None:
-            flask.flash('Esame già esistente')
-            return flask.redirect(flask.url_for('routes.create_exam'))
+            flask.flash('Esame già esistente', 'error')
+            return flask.redirect(flask.url_for('routes.create_exam', form=form, show_popup=show_popup))
         else:
-            flask.flash('Esame creato con successo')
             db.session.add(esame)
             db.session.commit()
             record = Creazione_esame(idE=idE, idD=current_user.idD, ruolo_docente='Presidente')
             db.session.add(record)
             db.session.commit()
+            show_popup = True
+            return flask.redirect(flask.url_for('routes.create_exam', form=form, show_popup=show_popup))
     
-    return flask.render_template('create_exam.html', form=form)
+    return flask.render_template('create_exam.html', form=form, show_popup=show_popup)
+
 
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
@@ -332,3 +350,38 @@ def student_page(idS):
     )
 
     return flask.render_template('student_page.html', studente=studente, lista_esami=lista_esami)
+
+@bp.route('/delete_exam/<string:idE>', methods=['GET', 'POST'])
+@login_required
+def delete_exam(idE):
+    from db_setup import Esame, Prova, Creazione_esame, Appelli, db
+
+    # Retrieve the Esame object
+    esame = Esame.query.filter_by(idE=idE).first()
+    prove = Prova.query.filter_by(idE=idE).all()
+    creazione_esame = Creazione_esame.query.filter_by(idE=idE).all()
+    appelli = []
+    for prova in prove:
+        appelli.extend(Appelli.query.filter_by(idP=prova.idP).all())
+
+    try:
+        for appello in appelli:
+            db.session.delete(appello)
+
+        for creazione in creazione_esame:
+            db.session.delete(creazione)
+
+        for prova in prove:
+            db.session.delete(prova)
+
+        db.session.delete(esame)
+
+        db.session.commit()
+        flask.flash('Esame eliminato correttamente')
+    except Exception as e:
+        print("Error deleting exam:", e)
+
+
+    current_user_id = current_user.idD
+    lista_esami = db.session.query(Esame).join(Creazione_esame).filter(Creazione_esame.idD == current_user_id).all()
+    return flask.render_template('view_exams.html', idE=idE, lista_esami=lista_esami)

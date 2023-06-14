@@ -49,3 +49,20 @@ li a:hover {
   .student-info p {
     margin: 5px 0;
   }
+  
+  .student-list {
+    position: relative;
+}
+
+.student-info {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.student-info:hover {
+    background-color: #f0f0f0;
+}
