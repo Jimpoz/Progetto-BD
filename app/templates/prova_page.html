@@ -55,7 +55,19 @@
             
         </table>
     </div>
-
     <br>
     <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+    <button id="button_elimina_prova" onclick="confirmDeleteProva()" type="button">Elimina prova</button>
+
+
+    <script>
+        function confirmDeleteProva() {
+            var result = confirm("Conferma l'eliminazione della prova");
+            if (result) {
+                window.location.href = "{{ url_for('routes.delete_prova', idP=prova.idP) }}";
+            }
+        }
+    </script>
 </body>
+
+</html>

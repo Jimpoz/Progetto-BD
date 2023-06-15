@@ -88,3 +88,20 @@ th{
 tr:hover {
     background-color: #f5f5f5;
 }
+
+#button_elimina_prova {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    max-width: 100px;
+    position: relative;
+    left: calc(85% - 120px);
+    background-color: #f8f8f8;
+    color: black;
+    border: 1px solid lightgrey;
+}
+
+#button_elimina_prova:hover {
+    background-color: #ddd;
+    transition: background-color 0.3s ease;
+}

@@ -208,7 +208,7 @@ def redirect_to_exam_page():
 @bp.route('/create_test/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def create_test(idE):
-    from db_setup import Esame, Docente, Prova, db
+    from db_setup import Esame, Docente, Prova, Creazione_esame, db
     from forms import Create_Test
     from flask_login import current_user
     
@@ -229,7 +229,7 @@ def create_test(idE):
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
-            return flask.redirect(flask.url_for('routes.create_test', form=form, idE=idE))
+            return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE))
         else:
             try:
                 db.session.add(prova)
@@ -238,7 +238,22 @@ def create_test(idE):
             except Exception as e:
                 print("Error committing Prova:", e)
             
-            return flask.redirect(flask.url_for('routes.create_test',form=form, idE=idE))
+            esame = Esame.query.filter_by(idE=idE).first()
+            lista_docenti = db.session.query(Docente).join(Creazione_esame).filter(Creazione_esame.idE == idE).all()
+            lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
+            docenti_roles = (
+                db.session.query(Docente, Creazione_esame.ruolo_docente)
+                .join(Creazione_esame)
+                .filter(Creazione_esame.idE == idE)
+                .all()
+            )
+            
+            user_role = (
+                db.session.query(Creazione_esame.ruolo_docente)
+                .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
+                .scalar()
+            )
+            return flask.render_template('exam_page.html', esame=esame , lista_docenti=lista_docenti, lista_prove=lista_prove, docenti_roles=docenti_roles, user_role=user_role)
 
     return flask.render_template('create_test.html', form=form, idE=idE)
     
@@ -385,3 +400,44 @@ def delete_exam(idE):
     current_user_id = current_user.idD
     lista_esami = db.session.query(Esame).join(Creazione_esame).filter(Creazione_esame.idD == current_user_id).all()
     return flask.render_template('view_exams.html', idE=idE, lista_esami=lista_esami)
+
+
+@bp.route('/delete_prova/<string:idP>', methods=['GET', 'POST'])
+@login_required
+def delete_prova(idP):
+    from db_setup import Prova, Appelli, Esame,Docente, Creazione_esame, db
+    
+    prova = Prova.query.filter_by(idP=idP).first()
+    esame = Esame.query.filter_by(idE=prova.idE).first()
+    idE = esame.idE
+    #find all appelli with that prova
+    appelli = Appelli.query.filter_by(idP=idP).all()
+    try:
+        for appello in appelli:
+            db.session.delete(appello)
+        db.session.delete(prova)
+        db.session.commit()
+        flask.flash('Prova eliminata correttamente')
+    except Exception as e:
+        print("Error deleting prova:", e)
+    
+    #query that returns all of the professors of the exam through the idE and the idD in the table Creazione_esame
+    lista_docenti = db.session.query(Docente).join(Creazione_esame).filter(Creazione_esame.idE == idE).all()
+    
+    #query that returns all of the tests of the exam through the idE and the idD in the table Prova
+    lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
+    
+    docenti_roles = (
+        db.session.query(Docente, Creazione_esame.ruolo_docente)
+        .join(Creazione_esame)
+        .filter(Creazione_esame.idE == idE)
+        .all()
+    )
+    
+    user_role = (
+        db.session.query(Creazione_esame.ruolo_docente)
+        .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
+        .scalar()
+    )
+    
+    return flask.render_template('exam_page.html', esame=esame , lista_docenti=lista_docenti, lista_prove=lista_prove, docenti_roles=docenti_roles, user_role=user_role)
