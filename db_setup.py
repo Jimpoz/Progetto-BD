@@ -85,13 +85,11 @@ class Appelli(db.Model):
     __tablename__ = 'Appelli'
 
     idP = db.Column(db.String(100), db.ForeignKey('prova.idP', name=None), primary_key=True)
-    #idE = db.Column(db.String(100), db.ForeignKey('esame.idE', name=None), primary_key=True)
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS', name=None), primary_key=True)
     voto = db.Column(db.Integer)
     stato_superamento = db.Column(db.Boolean)
 
     prova = db.relationship('Prova', backref=db.backref('appelli', cascade='all, delete-orphan'))
-    #esame = db.relationship('Esame', backref=db.backref('appelli', cascade='all, delete-orphan'))
     studente = db.relationship('Studente', backref=db.backref('appelli', cascade='all, delete-orphan'))
 
     def __init__(self, idP, idS, voto, stato_superamento):
@@ -134,3 +132,16 @@ class Registrazione_esame(db.Model):
         self.idE = idE
         self.voto = voto
         self.data_superamento = data_superamento
+        
+'''
+#check e trigger da aggiungere
+
+se la lista appelli è vuote di uno studente allora nella verbalizzazione risulta assente
+se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
+uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
+un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
+una volta verbalizzato un esame non può essere eliminato dallo studente
+
+#da aggiungere
+
+'''

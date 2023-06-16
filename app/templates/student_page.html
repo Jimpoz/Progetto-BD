@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='student_page.css') }}">
-    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='goback.css') }}">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
@@ -10,35 +9,71 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagine studente</title>
+    <div id="Studente" class="w3-container">
+        <h1> Informazioni sullo studente</h1>
+    </div>
 </head>
 
 <body>
-    <h1>Informazioni sullo studente</h1>
-    <p>Nome: {{ studente.nome }}</p>
-    <p>Cognome: {{ studente.cognome }}</p>
-    <p>Matricola: {{ studente.idS }}</p>
-
-    <h2>Lista esami iscritti</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Nome Esame</th>
-                <th>Anno Accademico</th>
-                <th>CFU</th>
-                <th> Appello </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for esame in lista_esami %}
+    <div id="Student_info">
+        <p>Nome: {{ studente.nome }}</p>
+        <p>Cognome: {{ studente.cognome }}</p>
+        <p>Matricola: {{ studente.idS }}</p>
+    </div>
+    <div id="Lista_esami_iscritti">
+        <h2>Lista esami iscritti</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ esame.nome }}</td>
-                    <td>{{ esame.anno_accademico }}</td>
-                    <td>{{ esame.cfu }}</td>
+                    <th>Nome Esame</th>
+                    <th>Anno Accademico</th>
+                    <th>CFU</th>
+                    <th> Appello</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for esame in lista_esami_iscritti %}
+                    <tr>
+                        <td>{{ esame.nome }}</td>
+                        <td>{{ esame.anno_accademico }}</td>
+                        <td>{{ esame.cfu }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <br>
+    <div id="Lista_esami_passati">
+        <h2>Lista esami passati</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome Esame</th>
+                    <th>Anno Accademico</th>
+                    <th>CFU</th>
+                    <th>Voto</th>
+                    <th>Data superamento</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for esame in lista_esami_passati %}
+                    <tr>
+                        <td>{{ esame.nome }}</td>
+                        <td>{{ esame.anno_accademico }}</td>
+                        <td>{{ esame.cfu }}</td>
+                        <td>{{ esame.registrazione_esame.voto }}</td>
+                        <td>{{ esame.registrazione_esame.data_superamento }}</td>
+                        <td>
+                            <button onclick=onclick="window.location.href='{{url_for('routes.verbalizzazione', idE=esame.idE)}}'">Verbalizza</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+
     <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
 </body>
 </html>

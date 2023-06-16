@@ -30,7 +30,7 @@
                     <p>ID: {{ docente.idD }}</p>
                     <p>Nome: {{ docente.nome }}</p>
                     <p>Cognome: {{ docente.cognome }}</p>
-                    {% for ruolo in lista_ruoli %}
+                    {% for ruolo in lista_ruoli%}
                         {% if ruolo[0] == docente.idD%}
                             <p>Ruolo: {{ ruolo[1] }}</p>
                         {% endif %}

@@ -4,6 +4,7 @@ from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
 from datetime import datetime
 from flask import escape
+from sqlalchemy import and_
 
 login_manager = LoginManager()
 
@@ -133,12 +134,10 @@ def search_student():
 @login_required
 def docenti_list():
     from db_setup import Docente, Esame, db, Creazione_esame
-    # Get the exam id from the URL
+
     idE = request.args.get('idE')
     esame = db.session.query(Esame).filter(Esame.idE == idE).first()
     lista_docenti = db.session.query(Docente).all()
-
-    # Fetch the roles of the professors for the specific exam
     lista_ruoli = (
         db.session.query(Creazione_esame.idD, Creazione_esame.ruolo_docente)
         .filter(Creazione_esame.idE == idE)
@@ -147,7 +146,19 @@ def docenti_list():
 
     current_user_id = current_user.idD
 
-    return flask.render_template('docenti_list.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
+    # Create a new list to store docenti without a role for the specific exam
+    docenti_senza_ruolo = []
+
+    for docente in lista_docenti:
+        has_role = False
+        for ruolo in lista_ruoli:
+            if docente.idD == ruolo.idD:
+                has_role = True
+                break
+        if not has_role:
+            docenti_senza_ruolo.append(docente)
+
+    return flask.render_template('docenti_list.html', esame=esame, lista_docenti=docenti_senza_ruolo, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
 
 @bp.route('/docenti_list_del', methods=['GET', 'POST'])
 @login_required
@@ -166,8 +177,20 @@ def docenti_list_del():
     )
     
     current_user_id = current_user.idD
+    
+    # Create a new list to store docenti with a role for the specific exam
+    docenti_con_ruolo = []
+    
+    for docente in lista_docenti:
+        has_role = False
+        for ruolo in lista_ruoli:
+            if docente.idD == ruolo.idD:
+                has_role = True
+                break
+        if has_role:
+            docenti_con_ruolo.append(docente)
 
-    return flask.render_template('docenti_list_del.html', esame=esame, lista_docenti=lista_docenti, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
+    return flask.render_template('docenti_list_del.html', esame=esame, lista_docenti=docenti_con_ruolo, lista_ruoli=lista_ruoli, current_user_id=current_user_id)
 
 @bp.route('/exam_page', methods=['GET', 'POST'])
 @login_required
@@ -352,19 +375,29 @@ def prova_page():
 @bp.route('/student_page/<int:idS>', methods=['GET'])
 @login_required
 def student_page(idS):
-    from db_setup import Studente, Esame, Prova, db, Appelli
+    from db_setup import Studente, Esame, Prova, db, Appelli, Registrazione_esame
     
     studente = db.session.query(Studente).filter_by(idS=idS).first()
     
-    lista_esami = (
+    lista_esami_iscritti = (
         db.session.query(Esame)
         .join(Prova, Esame.idE == Prova.idE)
         .join(Appelli)
         .filter(Appelli.idS == idS, Appelli.idP == Prova.idP)
         .all()
     )
+    
+    lista_esami_passati = (
+    db.session.query(Esame)
+    .join(Registrazione_esame, Esame.idE == Registrazione_esame.idE)
+    .join(Appelli, and_(Appelli.idS == Registrazione_esame.idS))
+    .filter(Registrazione_esame.idS == idS, Appelli.stato_superamento == True)
+    .all()
+    )
 
-    return flask.render_template('student_page.html', studente=studente, lista_esami=lista_esami)
+
+
+    return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=lista_esami_passati)
 
 @bp.route('/delete_exam/<string:idE>', methods=['GET', 'POST'])
 @login_required
@@ -441,3 +474,14 @@ def delete_prova(idP):
     )
     
     return flask.render_template('exam_page.html', esame=esame , lista_docenti=lista_docenti, lista_prove=lista_prove, docenti_roles=docenti_roles, user_role=user_role)
+
+@bp.route('/verbalizzazione/<string:idE>', methods=['GET', 'POST'])
+@login_required
+def verbalizzazione(idE):
+    from db_setup import Esame, Prova, Appelli, Studente, Registrazione_esame, db
+    #with the iDE find the exams that have Appelli.stato_superamento == True
+    #for each exam show all the Appelli.voto
+    
+    
+    
+    return flask.render_template('verbalizzazione.html', idE=idE)
