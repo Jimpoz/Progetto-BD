@@ -527,5 +527,8 @@ def modify_exam(idE):
                 print("Error committing Esame:", e)
             
             #manca ruolo docente?
+    
+    #query the exam
+    esame = db.session.query(Esame).filter(Esame.idE == idE).first()
 
-    return flask.render_template('modify_exam.html', form=form, esame=esame, idE=idE, show_popup=show_popup)
+    return flask.render_template('modify_exam.html', form=form, idE=idE, show_popup=show_popup, esame=esame)
