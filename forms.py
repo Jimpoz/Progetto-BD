@@ -27,6 +27,15 @@ class Create_Exam( FlaskForm ):
     cfu = StringField('CFU Esame', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "CFU Esame"})
     created = HiddenField()
     submit = SubmitField('Crea Esame')
+
+class Modify_Exam( FlaskForm ):
+    from db_setup import Esame, Docente
+    nome = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
+    idE = StringField('Id Esame', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Esame"})
+    anno_accademico = StringField('Anno Accademico', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Anno Accademico"})
+    cfu = StringField('CFU Esame', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "CFU Esame"})
+    created = HiddenField()
+    submit = SubmitField('Modifica Esame')
     
 class Create_Test(FlaskForm):
     idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})

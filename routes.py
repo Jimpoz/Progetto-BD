@@ -500,9 +500,9 @@ def verbalizzazione(idE):
 @login_required
 def modify_exam(idE):
     from db_setup import Esame, db
-    from forms import Create_Exam
+    from forms import Modify_Exam
 
-    form = Create_Exam()
+    form = Modify_Exam()
     show_popup = False
     
     if form.validate_on_submit():
