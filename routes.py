@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from datetime import datetime
 from flask import escape
 from sqlalchemy import and_
+from sqlalchemy.orm import joinedload
 
 login_manager = LoginManager()
 
@@ -379,6 +380,8 @@ def student_page(idS):
     
     studente = db.session.query(Studente).filter_by(idS=idS).first()
     
+    #do not show the ones that have Appelli.stato_superamento = True and are like "completo" OR
+    #the ones that have multiple Appelli with stato_superamento = True and are NOT like "completo"
     lista_esami_iscritti = (
         db.session.query(Esame)
         .join(Prova, Esame.idE == Prova.idE)
@@ -387,17 +390,25 @@ def student_page(idS):
         .all()
     )
     
-    lista_esami_passati = (
-    db.session.query(Esame)
-    .join(Registrazione_esame, Esame.idE == Registrazione_esame.idE)
-    .join(Appelli, and_(Appelli.idS == Registrazione_esame.idS))
-    .filter(Registrazione_esame.idS == idS, Appelli.stato_superamento == True)
-    .all()
-    )
+    #lista esami passati is an exam that has all the Prova with an idP that do not contain "completo" and have all stato_superamento = True
+    #or one Appello with stato_superamento = True and idP = prova.idP and prova.idE = esame.idE and idP contains "completo"
+    lista_esami_passati = db.session.query(Esame.idE).join(Prova).join(Appelli).filter(
+    (Appelli.idP.like('%completo%progetto%') | Appelli.idP.like('%tutti%progetto%'))
+    & Appelli.stato_superamento.is_(True)
+    & (db.session.query(db.func.count(Prova.idP)).filter(Prova.idE == Esame.idE).scalar() == 1)
+    ).all()
+        
+    result = db.session.query(Esame.idE).join(Prova, Esame.idE == Prova.idE).join(Prova, Esame.idE == Prova.idE).join(Appelli, Appelli.idP == Prova.idP).filter(
+    Prova.idP != Prova.idP,
+    (Prova.data > Prova.data) | (Prova.data > Prova.data),
+    Appelli.stato_superamento.is_(True)
+    ).all()
+    
+    union = lista_esami_passati.union(result)
 
-
-
-    return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=lista_esami_passati)
+    #not correct, to fix
+    
+    return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=union)
 
 @bp.route('/delete_exam/<string:idE>', methods=['GET', 'POST'])
 @login_required
