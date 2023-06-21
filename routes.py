@@ -496,13 +496,36 @@ def verbalizzazione(idE):
     
     return flask.render_template('verbalizzazione.html', idE=idE)
 
-#To fix ciò che prende
-@bp.route('/modify_exam', methods=['GET', 'POST'])
+@bp.route('/modify_exam/<string:idE>', methods=['GET', 'POST'])
 @login_required
-def modify_exam():
-    from db_setup import Esame
-    #get the exam id from the url
-    idE = request.args.get('idE')
-    esame = Esame.query.filter_by(idE=idE).first()
+def modify_exam(idE):
+    from db_setup import Esame, db
+    from forms import Create_Exam
 
-    return flask.render_template('modify_exam.html', esame=esame)
+    form = Create_Exam()
+    show_popup = False
+    
+    if form.validate_on_submit():
+        idE = form.idE.data
+        nome = form.nome.data
+        anno_accademico = form.anno_accademico.data
+        cfu = form.cfu.data
+        esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu)
+        
+        if Esame.query.filter_by(idE=idE).first() is not None:
+            flask.flash('Esame già esistente', 'error')
+            #return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE, show_popup=show_popup))
+        else:
+            try:
+                #da cambiare add
+                db.session.add(esame)
+                db.session.commit()
+                print("Esame added successfully")
+                show_popup = True
+                #return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE, show_popup=show_popup))
+            except Exception as e:
+                print("Error committing Esame:", e)
+            
+            #manca ruolo docente?
+
+    return flask.render_template('modify_exam.html', form=form, esame=esame, idE=idE, show_popup=show_popup)
