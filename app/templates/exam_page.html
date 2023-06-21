@@ -67,7 +67,7 @@
     
     <br>
     <div class="button-container">
-        <button id="button_exam" type="button">Modifica esame</button>
+        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.modify_exam', idE=esame.idE)}}'">Modifica esame</button>
         <!--<button id="button_exam" type="button" onclick="confirmDelete()">Elimina esame</button>-->
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'">Aggiungi prova</button>
     </div>

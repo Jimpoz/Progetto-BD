@@ -280,7 +280,6 @@ def create_test(idE):
             return flask.render_template('exam_page.html', esame=esame , lista_docenti=lista_docenti, lista_prove=lista_prove, docenti_roles=docenti_roles, user_role=user_role)
 
     return flask.render_template('create_test.html', form=form, idE=idE)
-    
 
 @bp.route('/get_all_docenti', methods=['GET'])
 @login_required
@@ -496,3 +495,14 @@ def verbalizzazione(idE):
     
     
     return flask.render_template('verbalizzazione.html', idE=idE)
+
+#To fix ciò che prende
+@bp.route('/modify_exam', methods=['GET', 'POST'])
+@login_required
+def modify_exam():
+    from db_setup import Esame
+    #get the exam id from the url
+    idE = request.args.get('idE')
+    esame = Esame.query.filter_by(idE=idE).first()
+
+    return flask.render_template('modify_exam.html', esame=esame)
