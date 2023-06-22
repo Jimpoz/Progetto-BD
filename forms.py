@@ -46,3 +46,13 @@ class Create_Test(FlaskForm):
     ora_prova = TimeField('Ora prova', validators=[InputRequired()], format='%H:%M')
     data_scadenza = DateField('Data Scadenza', validators=[InputRequired()], format='%Y-%m-%d')
     submit = SubmitField('Crea Prova')
+
+class Modify_Test(FlaskForm):
+    idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})
+    nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
+    tipo_prova = SelectField('Tipo Prova', choices=[('scritto', 'Scritto'), ('orale', 'Orale'), ('pratico', 'Pratico'), ('completo', 'Completo')], validators=[InputRequired()])
+    tipo_voto = StringField('Tipo Voto', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Tipo Voto"})
+    data = DateField('Data', validators=[InputRequired()], format='%Y-%m-%d')
+    ora_prova = TimeField('Ora prova', validators=[InputRequired()], format='%H:%M')
+    data_scadenza = DateField('Data Scadenza', validators=[InputRequired()], format='%Y-%m-%d')
+    submit = SubmitField('Modifica Prova')

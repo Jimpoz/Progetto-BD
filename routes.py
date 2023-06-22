@@ -523,6 +523,8 @@ def modify_exam(idE):
     flask.flash('Esame aggiornato')
     esame=db.session.query(Esame).filter(Esame.idE == idE).first()
     #da testare
+    #manca ruolo docente?
+    #mancano controlli di sicurezza (esame uguale ad un altro)
         
     #if request.method=='POST' and form.validate():
         #flask.save_changes(form,idE)
@@ -541,8 +543,52 @@ def modify_exam(idE):
                 #return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE, show_popup=show_popup))
             except Exception as e:
                 print("Error committing Esame:", e)
-        """
-            
-            #manca ruolo docente?
+    """
 
     return flask.render_template('modify_exam.html', form=form, idE=idE, esame=esame)
+
+@bp.route('/modify_test/<string:idP>', methods=['GET', 'POST'])
+@login_required
+def modify_prova(idP):
+    from db_setup import Prova, Studente, Appelli, db
+    from forms import Modify_Test
+
+    form = Modify_Test()
+    
+    if form.validate_on_submit():
+        idP = form.idP.data
+        #idD = current_user.idD
+        nome_prova = form.nome_prova.data
+        tipo_prova = form.tipo_prova.data
+        tipo_voto = form.tipo_voto.data
+        data = form.data.data
+        ora_prova = form.ora_prova.data
+        ora_prova_string = ora_prova.strftime('%H:%M')
+        data_scadenza = form.data_scadenza.data
+    
+        prova=db.session.query(Prova).filter(Prova.idP == idP).first()
+        prova.idP=idP
+        #prova.idD=idD
+        prova.nome_prova=nome_prova
+        prova.tipo_prova=tipo_prova
+        prova.tipo_voto=tipo_voto
+        prova.data=data
+        prova.ora_prova=ora_prova
+        prova.ora_prova_string=ora_prova_string
+        prova.data_scadenza=data_scadenza
+
+    db.session.commit()
+    flask.flash('Prova aggiornata')
+    prova=db.session.query(Prova).filter(Prova.idP == idP).first()
+    lista_studenti = (
+        db.session.query(Studente)
+        .join(Appelli)
+        .filter(Appelli.idP == idP)
+        .all()
+    )
+    #da testare
+    #manca ruolo docente?
+    #mancano controlli di sicurezza (prova uguale ad un'altra)
+
+    return flask.render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
+    
