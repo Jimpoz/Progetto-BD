@@ -1,25 +1,90 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/login.css">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="index.css" rel="stylesheet">
-    <title>Login page</title>
-</head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/login.css">
+    <style>
+        body {
+            background-color: #8B0000;
+        }
 
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #ff4c4c;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-group label {
+            color: #555;
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-color: #ff4c4c;
+        }
+
+        .btn-primary {
+            background-color: #ff4c4c;
+            border-color: #ff4c4c;
+        }
+
+        .btn-primary:hover {
+            background-color: #cc0000;
+            border-color: #cc0000;
+        }
+
+        .university-logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
 <body>
 
-    <h1>Login</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <img src="../static/pngs/unive_logo.png" alt="University Logo" class="university-logo">
+                        <h1 class="text-center">Login</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.email.label(class_="font-weight-bold") }}
+                                {{ form.email(class_="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.label(class_="font-weight-bold") }}
+                                {{ form.password(class_="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.submit(class_="btn btn-primary btn-block") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        {{ form.email }}
-        {{ form.password }}
-        {{ form.submit }}
-    </form>
-    
 </body>
 </html>
