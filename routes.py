@@ -588,7 +588,6 @@ def modify_prova(idP):
     )
     #da testare
     #manca ruolo docente?
-    #mancano controlli di sicurezza (prova uguale ad un'altra)
 
     return flask.render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
     
