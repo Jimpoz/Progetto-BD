@@ -8,12 +8,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifica Esame</title>
+    <title>Modifica Prova</title>
 
     {% if show_popup %}
     <script>
         window.onload = function() {
-            alert("Esame Modificato Correttamente");
+            alert("Prova Modificata Correttamente");
         };
     </script>
     {% endif %}
@@ -30,86 +30,123 @@
     </ul>
 
     <div id="Informazioni" class="w3-container">
-        <h1>Modifica delle informazioni dell'esame del corso</h1>
+        <h1>Modifica delle informazioni della prova</h1>
     </div>
 
-    <div id="Exam_Details">
+    <div id="Test_Details">
         <h2>Queste sono le informazioni attuali:</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Codice del corso</th>
+                    <th>Codice della Prova</th>
                 </tr>
             </thead>
             <tbody>
-                <td>{{ esame.idE }}</td>
+                <td>{{ prova.idP }}</td>
             </tbody>
         </table>
 
         <table>
             <thead>
                 <tr>
-                    <th>Nome del corso</th>
+                    <th>Nome della Prova</th>
                 </tr>
             </thead>
             <tbody>
-                <td>{{ esame.nome }}</td>
+                <td>{{ prova.nome_prova }}</td>
             </tbody>
         </table>
 
         <table>
             <thead>
                 <tr>
-                    <th>Anno Accademico</th>
+                    <th>Tipo di Prova</th>
                 </tr>
             </thead>
             <tbody>
-                <td>{{ esame.anno_accademico }}</td>
+                <td>{{ prova.tipo_prova }}</td>
             </tbody>
         </table>
 
         <table>
             <thead>
                 <tr>
-                    <th>CFU</th>
+                    <th>Tipo di Voto</th>
                 </tr>
             </thead>
             <tbody>
-                <td>{{ esame.cfu }}</td>
+                <td>{{ prova.tipo_voto }}</td>
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data Prova</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>{{ prova.data }}</td>
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data Scadenza Prova</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>{{ prova.data_scadenza }}</td>
+            </tbody>
+        </table>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ora Prova</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>{{ prova.ora_prova }}</td>
             </tbody>
         </table>
 
     </div>
 
-    
-    <!--<form action="{{ url_for('routes.modify_exam', idE=idE) }}" method="POST">
-        <input type="text" name="nome" placeholder="Nome">
-        <input type="text" name="idE" placeholder="id Esame">
-        <input type="text" name="anno_accademico" placeholder="Anno Accademico">
-        <input type="text" name="cfu" placeholder="CFU">
-        <input type="submit" value="Modifica Esame">
-    </form>-->
-
-    <form method="POST" action="{{ url_for('routes.modify_exam', idE=idE) }}">
+    <form method="POST" action="{{ url_for('routes.modify_prova', idP=idP) }}">
         
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.nome.label(class="w3-label") }}
-            {{ form.nome(class="w3-input w3-border", placeholder="Nome") }}
+            {{ form.idP.label(class="w3-label") }}
+            {{ form.idP(class="w3-input w3-border", placeholder="Codice Prova") }}
         </div>
         <div class="form-group">
-            {{ form.idE.label(class="w3-label") }}
-            {{ form.idE(class="w3-input w3-border", placeholder="Id Esame") }}
+            {{ form.nome_prova.label(class="w3-label") }}
+            {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova") }}
         </div>
         <div class="form-group">
-            {{ form.anno_accademico.label(class="w3-label") }}
-            {{ form.anno_accademico(class="w3-input w3-border", placeholder="Anno Accademico") }}
+            {{ form.tipo_prova.label(class="w3-label") }}
+            {{ form.tipo_prova(class="w3-input w3-border", placeholder="Tipo Prova") }}
         </div>
         <div class="form-group">
-            {{ form.cfu.label(class="w3-label") }}
-            {{ form.cfu(class="w3-input w3-border", placeholder="CFU") }}
+            {{ form.tipo_voto.label(class="w3-label") }}
+            {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto") }}
         </div>
+        <div class="form-group">
+            {{ form.data.label(class="w3-label") }}
+            {{ form.data(class="w3-input w3-border", placeholder="Data Prova") }}
+        </div>
+        <div class="form-group">
+            {{ form.data_scadenza.label(class="w3-label") }}
+            {{ form.data_scadenza(class="w3-input w3-border", placeholder="Data Scadenza Prova") }}
+        </div>
+        <div class="form-group">
+            {{ form.ora_prova.label(class="w3-label") }}
+            {{ form.ora_prova(class="w3-input w3-border", placeholder="Ora Prova") }}
+        </div>
+
         <div class="form-group">
             {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
         </div>
