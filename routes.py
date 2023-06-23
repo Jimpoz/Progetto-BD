@@ -591,3 +591,16 @@ def modify_prova(idP):
 
     return flask.render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
     
+@bp.route('/verbalizza/<string:idE>', methods=['GET', 'POST'])
+@login_required
+def verbalizza(idE):
+    from db_setup import Studente, db, Registrazione_esame
+    
+    lista_studenti = (
+        db.session.query(Studente)
+        .join(Registrazione_esame)
+        .filter(Registrazione_esame.idE == idE)
+        .all()
+    )
+    return flask.render_template('verbalizzazione.html', idE=idE, lista_studenti=lista_studenti)
+   
