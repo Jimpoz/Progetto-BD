@@ -63,19 +63,21 @@ class Prova( db.Model ):
     nome_prova = db.Column(db.String(100))
     tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico', 'completo'), name='tipo_prova')
     tipo_voto = db.Column(db.String(100))
+    percentuale = db.Column(db.Integer)
     data = db.Column(db.Date)
     ora_prova = db.Column(db.String(100))
     data_scadenza = db.Column(db.Date)
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
     idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
     
-    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, data, ora_prova, data_scadenza):
+    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, percentuale ,data, ora_prova, data_scadenza):
         self.idP = idP
         self.idE = idE
         self.idD = idD
         self.nome_prova = nome_prova
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
+        self.percentuale = percentuale
         self.data = data
         self.ora_prova = ora_prova
         self.data_scadenza = data_scadenza
@@ -141,6 +143,9 @@ se nella lista appelli c'è almeno un stato_superamento = False allora nella ver
 uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
 un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
 una volta verbalizzato un esame non può essere eliminato dallo studente
+uno studente non può iscriversi ad un esame che non esiste
+uno studente non può iscriversi a più esami lo stesso giorno
+un docente non può creare 2 prove identiche in 2 esami diversi
 
 #da aggiungere
 

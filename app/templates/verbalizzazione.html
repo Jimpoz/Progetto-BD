@@ -31,6 +31,7 @@
                     <th>Matricola</th>
                     <th>Nome</th>
                     <th>Cognome</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +40,12 @@
                     <td> {{ studente.idS }}</td>
                     <td> {{ studente.nome }}</td>
                     <td> {{ studente.cognome }}</td>
+                    <td>
+                        <button>Verbalizza</button>
+                    </td>
                 </tr>
+                
+                
                 {% endfor %}
             </tbody>
             

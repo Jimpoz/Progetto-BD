@@ -64,9 +64,6 @@
                         <td>{{ esame.cfu }}</td>
                         <td>{{ esame.registrazione_esame.voto }}</td>
                         <td>{{ esame.registrazione_esame.data_superamento }}</td>
-                        <td>
-                            <button onclick=onclick="window.location.href='{{url_for('routes.verbalizzazione', idE=esame.idE)}}'">Verbalizza</button>
-                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

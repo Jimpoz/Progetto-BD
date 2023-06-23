@@ -4,7 +4,7 @@ from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
 from datetime import datetime
 from flask import escape
-from sqlalchemy import and_
+from sqlalchemy import and_, func, not_, or_, any_, exists, case
 from sqlalchemy.orm import joinedload
 
 login_manager = LoginManager()
@@ -244,12 +244,13 @@ def create_test(idE):
         nome_prova = form.nome_prova.data
         tipo_prova = form.tipo_prova.data
         tipo_voto = form.tipo_voto.data
+        percentuale = form.percentuale.data
         data = form.data.data
         ora_prova = form.ora_prova.data
         ora_prova_string = ora_prova.strftime('%H:%M')
         data_scadenza = form.data_scadenza.data
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, data=data, ora_prova=ora_prova_string, data_scadenza=data_scadenza)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, percentuale=percentuale ,data=data, ora_prova=ora_prova_string, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
@@ -379,35 +380,31 @@ def student_page(idS):
     
     studente = db.session.query(Studente).filter_by(idS=idS).first()
     
-    #do not show the ones that have Appelli.stato_superamento = True and are like "completo" OR
-    #the ones that have multiple Appelli with stato_superamento = True and are NOT like "completo"
+    #show the ones that have at least one Appelli.stato_superamento = False
     lista_esami_iscritti = (
         db.session.query(Esame)
         .join(Prova, Esame.idE == Prova.idE)
         .join(Appelli)
-        .filter(Appelli.idS == idS, Appelli.idP == Prova.idP)
+        .filter(Appelli.idS == idS, Appelli.idP == Prova.idP, Appelli.stato_superamento == False)
         .all()
     )
-    
-    #lista esami passati is an exam that has all the Prova with an idP that do not contain "completo" and have all stato_superamento = True
-    #or one Appello with stato_superamento = True and idP = prova.idP and prova.idE = esame.idE and idP contains "completo"
-    lista_esami_passati = db.session.query(Esame.idE).join(Prova).join(Appelli).filter(
-    (Appelli.idP.like('%completo%progetto%') | Appelli.idP.like('%tutti%progetto%'))
-    & Appelli.stato_superamento.is_(True)
-    & (db.session.query(db.func.count(Prova.idP)).filter(Prova.idE == Esame.idE).scalar() == 1)
-    ).all()
-        
-    result = db.session.query(Esame.idE).join(Prova, Esame.idE == Prova.idE).join(Prova, Esame.idE == Prova.idE).join(Appelli, Appelli.idP == Prova.idP).filter(
-    Prova.idP != Prova.idP,
-    (Prova.data > Prova.data) | (Prova.data > Prova.data),
-    Appelli.stato_superamento.is_(True)
-    ).all()
-    
-    union = lista_esami_passati.union(result)
 
-    #not correct, to fix
+
     
-    return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=union)
+    #lista_esami_passati is the list of exams that the student has passed, meaning that all the Prova must have the stato_superamento = True
+    # and the sum of their percentage must be 100
+    lista_esami_passati = (
+        db.session.query(Esame)
+        .join(Prova, Esame.idE == Prova.idE)
+        .join(Appelli)
+        .filter(Appelli.idS == idS, Appelli.idP == Prova.idP, Appelli.stato_superamento == True)
+        .group_by(Esame.idE)
+        .having(func.sum(Prova.percentuale) == 100)
+        .all()
+    )
+
+    
+    return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=lista_esami_passati)
 
 @bp.route('/delete_exam/<string:idE>', methods=['GET', 'POST'])
 @login_required
@@ -485,17 +482,6 @@ def delete_prova(idP):
     
     return flask.render_template('exam_page.html', esame=esame , lista_docenti=lista_docenti, lista_prove=lista_prove, docenti_roles=docenti_roles, user_role=user_role)
 
-@bp.route('/verbalizzazione/<string:idE>', methods=['GET', 'POST'])
-@login_required
-def verbalizzazione(idE):
-    from db_setup import Esame, Prova, Appelli, Studente, Registrazione_esame, db
-    #with the iDE find the exams that have Appelli.stato_superamento == True
-    #for each exam show all the Appelli.voto
-    
-    
-    
-    return flask.render_template('verbalizzazione.html', idE=idE)
-
 @bp.route('/modify_exam/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def modify_exam(idE):
@@ -552,55 +538,62 @@ def modify_exam(idE):
 def modify_prova(idP):
     from db_setup import Prova, Studente, Appelli, db
     from forms import Modify_Test
-
-    form = Modify_Test()
+    prova = db.session.query(Prova).filter(Prova.idP == idP).first()
+    form = Modify_Test(obj=prova)
+    #form = Modify_Test()
     
     if form.validate_on_submit():
+        form.populate_obj(prova)
         idP = form.idP.data
-        #idD = current_user.idD
         nome_prova = form.nome_prova.data
         tipo_prova = form.tipo_prova.data
         tipo_voto = form.tipo_voto.data
         data = form.data.data
         ora_prova = form.ora_prova.data
-        ora_prova_string = ora_prova.strftime('%H:%M')
+        ora_prova_string = ora_prova.strftime("%H:%M")
         data_scadenza = form.data_scadenza.data
-    
-        prova=db.session.query(Prova).filter(Prova.idP == idP).first()
-        prova.idP=idP
-        #prova.idD=idD
-        prova.nome_prova=nome_prova
-        prova.tipo_prova=tipo_prova
-        prova.tipo_voto=tipo_voto
-        prova.data=data
-        prova.ora_prova=ora_prova
-        prova.ora_prova_string=ora_prova_string
-        prova.data_scadenza=data_scadenza
 
-    db.session.commit()
-    flask.flash('Prova aggiornata')
-    prova=db.session.query(Prova).filter(Prova.idP == idP).first()
+        prova = db.session.query(Prova).filter(Prova.idP == idP).first()
+        prova.idP = idP
+        prova.nome_prova = nome_prova
+        prova.tipo_prova = tipo_prova
+        prova.tipo_voto = tipo_voto
+        prova.data = data
+        prova.ora_prova = ora_prova
+        prova.ora_prova_string = ora_prova.strftime("%H:%M")
+        prova.data_scadenza = data_scadenza
+
+        db.session.commit()
+        flask.flash('Prova aggiornata')
+
+    prova = db.session.query(Prova).filter(Prova.idP == idP).first()
     lista_studenti = (
         db.session.query(Studente)
         .join(Appelli)
         .filter(Appelli.idP == idP)
         .all()
     )
-    #da testare
-    #manca ruolo docente?
 
     return flask.render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
+
     
 @bp.route('/verbalizza/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def verbalizza(idE):
-    from db_setup import Studente, db, Registrazione_esame
+    from db_setup import Studente, db, Appelli, Prova, Esame
     
+    #mostrare solo gli studenti che hanno superato le prove che ammontano a 100 con la percentuale di superamento
+    
+    #find the student that have passed the exam
     lista_studenti = (
         db.session.query(Studente)
-        .join(Registrazione_esame)
-        .filter(Registrazione_esame.idE == idE)
+        .join(Appelli, Studente.idS == Appelli.idS)
+        .join(Prova, Appelli.idP == Prova.idP)
+        .join(Esame, Prova.idE == Esame.idE)
+        .filter(Esame.idE == idE, Appelli.stato_superamento == True)
+        .group_by(Esame.idE, Studente.idS)
+        .having(func.sum(Prova.percentuale) == 100)
         .all()
     )
+    
     return flask.render_template('verbalizzazione.html', idE=idE, lista_studenti=lista_studenti)
-   

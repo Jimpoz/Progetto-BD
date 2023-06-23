@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, Email
 from flask_bcrypt import Bcrypt
-from wtforms import HiddenField, StringField, SelectField, SubmitField, DateField, TimeField
+from wtforms import HiddenField, StringField, SelectField, SubmitField, DateField, TimeField, BooleanField
 
 class Login_form( FlaskForm ):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
@@ -42,16 +42,19 @@ class Create_Test(FlaskForm):
     nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
     tipo_prova = SelectField('Tipo Prova', choices=[('scritto', 'Scritto'), ('orale', 'Orale'), ('pratico', 'Pratico'), ('completo', 'Completo')], validators=[InputRequired()])
     tipo_voto = StringField('Tipo Voto', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Tipo Voto"})
+    percentuale = StringField('Percentuale', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Percentuale"})
     data = DateField('Data', validators=[InputRequired()], format='%Y-%m-%d')
     ora_prova = TimeField('Ora prova', validators=[InputRequired()], format='%H:%M')
     data_scadenza = DateField('Data Scadenza', validators=[InputRequired()], format='%Y-%m-%d')
     submit = SubmitField('Crea Prova')
 
 class Modify_Test(FlaskForm):
+    enable_edit = BooleanField('Enable Edit')
     idP = StringField('Id Prova', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Id Prova"})
     nome_prova = StringField('Nome', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Nome"})
     tipo_prova = SelectField('Tipo Prova', choices=[('scritto', 'Scritto'), ('orale', 'Orale'), ('pratico', 'Pratico'), ('completo', 'Completo')], validators=[InputRequired()])
     tipo_voto = StringField('Tipo Voto', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Tipo Voto"})
+    percentuale = StringField('Percentuale', validators=[InputRequired(), Length(max=50)], render_kw={"placeholder": "Percentuale"})
     data = DateField('Data', validators=[InputRequired()], format='%Y-%m-%d')
     ora_prova = TimeField('Ora prova', validators=[InputRequired()], format='%H:%M')
     data_scadenza = DateField('Data Scadenza', validators=[InputRequired()], format='%Y-%m-%d')

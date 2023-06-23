@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/exam_page.css">
     <link rel="stylesheet" href="../static/create_exam.css">
     <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
@@ -9,19 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica Prova</title>
-
-    {% if show_popup %}
-    <script>
-        window.onload = function() {
-            alert("Prova Modificata Correttamente");
-        };
-    </script>
-    {% endif %}
-
 </head>
 
 <body>
-
     <ul>
         <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
         <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
@@ -29,132 +18,96 @@
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
     </ul>
 
-    <div id="Informazioni" class="w3-container">
-        <h1>Modifica delle informazioni della prova</h1>
+    <div id="Create_Test" class="w3-container">
+        <h1>Modifica Prova</h1>
     </div>
 
-    <div id="Test_Details">
-        <h2>Queste sono le informazioni attuali:</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Codice della Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.idP }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome della Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.nome_prova }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo di Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.tipo_prova }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo di Voto</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.tipo_voto }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Data Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.data }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Data Scadenza Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.data_scadenza }}</td>
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Ora Prova</th>
-                </tr>
-            </thead>
-            <tbody>
-                <td>{{ prova.ora_prova }}</td>
-            </tbody>
-        </table>
-
-    </div>
-
-    <form method="POST" action="{{ url_for('routes.modify_prova', idP=idP) }}">
-        
+    <form id="create_test" method="POST" action="{{ url_for('routes.modify_prova', idP=idP) }}">
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}
+
         <div class="form-group">
             {{ form.idP.label(class="w3-label") }}
-            {{ form.idP(class="w3-input w3-border", placeholder="Codice Prova") }}
+            {% if form.enable_edit.data %}
+                {{ form.idP(class="w3-input w3-border", placeholder="Id Prova") }}
+            {% else %}
+                {{ form.idP(class="w3-input w3-border", placeholder="Id Prova", readonly="readonly") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
             {{ form.nome_prova.label(class="w3-label") }}
-            {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova") }}
+            {% if form.enable_edit.data %}
+                {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova") }}
+            {% else %}
+                {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova", readonly="readonly") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
             {{ form.tipo_prova.label(class="w3-label") }}
-            {{ form.tipo_prova(class="w3-input w3-border", placeholder="Tipo Prova") }}
+            {% if form.enable_edit.data %}
+                {{ form.tipo_prova(class="w3-input w3-border") }}
+            {% else %}
+                {{ form.tipo_prova(class="w3-input w3-border", disabled="disabled") }}
+            {% endif %}
         </div>
+
         <div class="form-group">
             {{ form.tipo_voto.label(class="w3-label") }}
-            {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto") }}
-        </div>
-        <div class="form-group">
-            {{ form.data.label(class="w3-label") }}
-            {{ form.data(class="w3-input w3-border", placeholder="Data Prova") }}
-        </div>
-        <div class="form-group">
-            {{ form.data_scadenza.label(class="w3-label") }}
-            {{ form.data_scadenza(class="w3-input w3-border", placeholder="Data Scadenza Prova") }}
-        </div>
-        <div class="form-group">
-            {{ form.ora_prova.label(class="w3-label") }}
-            {{ form.ora_prova(class="w3-input w3-border", placeholder="Ora Prova") }}
+            {% if form.enable_edit.data %}
+                {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto") }}
+            {% else %}
+                {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto", readonly="readonly") }}
+            {% endif %}
         </div>
 
         <div class="form-group">
-            {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+            <p>Valore della prova (in percentuale)</p>
+            {% if form.enable_edit.data %}
+                {{ form.percentuale(class="w3-input w3-border", placeholder="Percentuale") }}
+            {% else %}
+                {{ form.percentuale(class="w3-input w3-border", placeholder="Percentuale", readonly="readonly") }}
+            {% endif %}
+        </div>
+    
+        <div class="form-group">
+            <p>Data della prova</p>
+            {% if form.enable_edit.data %}
+                {{ form.data(class="w3-input w3-border") }}
+            {% else %}
+                {{ form.data(class="w3-input w3-border", disabled="disabled") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <p>Ora della prova</p>
+            {% if form.enable_edit.data %}
+                <input type="text" class="w3-input w3-border" id="ora_prova" name="ora_prova" value="{{ prova.ora_prova }}" onclick="enableEdit()">
+            {% else %}
+                <input type="text" class="w3-input w3-border" id="ora_prova" name="ora_prova" value="{{ prova.ora_prova }}" readonly>
+            {% endif %}
+        </div>
+        
+    
+        <div class="form-group">
+            <p>Data scadenza della prova</p>
+            {% if form.enable_edit.data %}
+                {{ form.data_scadenza(class="w3-input w3-border") }}
+            {% else %}
+                {{ form.data_scadenza(class="w3-input w3-border", disabled="disabled") }}
+            {% endif %}
+        </div>
+    
+        <div class="form-group">
+            {% if form.enable_edit.data %}
+                {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+            {% else %}
+                <button type="button" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="enableEdit()">Modifica</button>
+            {% endif %}
         </div>
     </form>
-
-    <br>
     
     <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
-
 </body>
 </html>
