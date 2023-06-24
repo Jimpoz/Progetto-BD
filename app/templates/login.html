@@ -6,55 +6,8 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="../static/login.css">
-    <style>
-        body {
-            background-color: #8B0000;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: #ff4c4c;
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .form-group label {
-            color: #555;
-            font-weight: bold;
-        }
-
-        .form-control {
-            border-color: #ff4c4c;
-        }
-
-        .btn-primary {
-            background-color: #ff4c4c;
-            border-color: #ff4c4c;
-        }
-
-        .btn-primary:hover {
-            background-color: #cc0000;
-            border-color: #cc0000;
-        }
-
-        .university-logo {
-            display: block;
-            margin: 0 auto;
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -69,11 +22,11 @@
                         <form method="POST" action="">
                             {{ form.hidden_tag() }}
                             <div class="form-group">
-                                {{ form.email.label(class_="font-weight-bold") }}
+                                {{ form.email.label(class="w3-label") }}
                                 {{ form.email(class_="form-control") }}
                             </div>
                             <div class="form-group">
-                                {{ form.password.label(class_="font-weight-bold") }}
+                                {{ form.password.label(class="w3-label") }}
                                 {{ form.password(class_="form-control") }}
                             </div>
                             <div class="form-group">

@@ -37,7 +37,53 @@ form button {
   cursor: pointer;
 }
 
-form button:hover {
-  background-color: #45a049;
+.w3-label {
+  font-weight: bold;
 }
 
+body {
+  background-color: #8B0000;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #ff4c4c;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.form-group label {
+  color: #555;
+  font-weight: bold;
+}
+
+.form-control {
+  border-color: #ff4c4c;
+}
+
+.btn-primary {
+  background-color: #ff4c4c;
+  border-color: #ff4c4c;
+}
+
+.btn-primary:hover {
+  background-color: #cc0000;
+  border-color: #cc0000;
+}
+
+.university-logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;
+  margin-bottom: 20px;
+}
