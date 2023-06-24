@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/create_exam.css">
+    <link rel="stylesheet" href="../static/navbar.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,11 +20,12 @@
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
-        <li><a class="active" href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
-        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
+
 
     <div id="Crea_Esame" class="w3-container">
         <h1>Crea Esame</h1>

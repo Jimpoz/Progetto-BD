@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/view_exams.css">
-    <link rel="stylesheet" href="../static/goback.css">
+    <link rel="stylesheet" href="../static/navbar.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,10 +13,10 @@
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
-        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
-        <li><a class="active" href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
     <div id="Lista" class="w3-container">
@@ -36,8 +36,6 @@
             </tr>
         </table>
     </div>
-    <!--
-    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
-    -->
+    
 </body>
 </html>

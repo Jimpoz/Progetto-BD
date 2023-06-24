@@ -1,11 +1,6 @@
 #Lista {
-  background-color: orange;
-  color: black;
-  padding: 20px;
-}
-
-.w3-label {
-  font-weight: bold;
+  margin-top: 20px;
+  padding-left: 20px;
 }
 
 body {

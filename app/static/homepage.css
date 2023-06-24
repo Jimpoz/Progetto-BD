@@ -1,46 +1,6 @@
 #Utente {
-  background-color: orange;
-  color: black;
-  padding: 20px;
-}
-
-.w3-label {
-  font-weight: bold;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #f8f8f8;
-}
-
-li {
-  float: left;
-}
-
-li a {
-  display: block;
-  color: #333;
+  margin-top: 50px;
   text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-li a:hover {
-  background-color: #ddd;
-}
-
-.active {
-  background-color: #4CAF50;
-  color: white;
 }
 
 form {
@@ -55,22 +15,36 @@ form {
   align-items: center;
 }
 
-.search-bar input[type=text]{
-  padding:6px;
+.search-bar input[type="text"] {
+  padding:10px;
   font-size: medium;
+  width: 300px;
 }
 
-.search-bar input[type=submit]{
+.search-bar input[type="submit"] {
   float:right;
-  padding: 6px;
-  background: #f8f8f8;
-  border: 1px solid grey;
-  font-size: medium;
+  padding-left:20px;
+  padding: 10px 20px;
+  background-color: #8B0000;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
   cursor: pointer;
-  height:35px;
+  font-size: medium;
 }
 
-.search-bar input[type=submit]:hover{
-  background-color:#ddd;
-  transition: background-color 0.3s ease;
+.search-bar input[type="submit"]:hover {
+  background-color: #cc0000;
+  transition: 0.3s ease;
+}
+
+.search-bar button {
+  float: right;
+  padding: 6px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background: #ddd;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
 }
