@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/create_exam.css">
+    <link rel="stylesheet" href="../static/create-modify_exam-test.css">
     <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
@@ -104,7 +104,7 @@
             {% if form.enable_edit.data %}
                 {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
             {% else %}
-                <button type="button" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="enableEdit()">Modifica</button>
+                <button type="button" class="w3-btn w3-red w3-hover-green w3-border-black" onclick="enableEdit()">Modifica Prova</button>
             {% endif %}
         </div>
     </form>
