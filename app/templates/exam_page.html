@@ -31,8 +31,8 @@
         {% endfor %}
         
         {% if user_role == "Presidente" %}
-            <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
-            <button id="button_membri" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
+            <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
+            <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
         {% endif %}
 
         
