@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="../static/view_exams.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +14,6 @@
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
         <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
@@ -23,19 +23,20 @@
         <h1>Lista di esami</h1>
     </div>
 
-    <div id="Esami">
-        <table>
-            <tr>
-                {% for esame in lista_esami %}
-                <td>
-                    <div class="exam-grid">
-                        <a href="{{ url_for('routes.exam_page', idE=esame.idE) }}">{{ esame.idE }}</a>
+    <div id="Esami" class="container">
+        <div class="row">
+            {% for esame in lista_esami %}
+            <div class="col-md-4">
+                <a href="{{ url_for('routes.exam_page', idE=esame.idE) }}" class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{ esame.idE }}</h5>
                     </div>
-                </td>
-                {% endfor %}
-            </tr>
-        </table>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

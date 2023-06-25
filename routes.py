@@ -15,7 +15,8 @@ bp = Blueprint('routes', __name__)
 def login():
     from db_setup import Docente
     from forms import Login_form
-    from flask_login import current_user, logout_user
+    from flask_login import current_user, logout_user, login_user
+    from werkzeug.security import check_password_hash
     form = Login_form()
 
     if current_user.is_authenticated:
@@ -24,18 +25,19 @@ def login():
 
     if form.validate_on_submit():
         docente = Docente.query.filter_by(email=form.email.data).first()  # parametrizzato
-        if docente is not None and docente.check_password(form.password.data):
-            flask.flash('Logged in successfully.')
-            login_user(docente)
-            return flask.redirect(flask.url_for('routes.homepage'))
-        else:
+        if not docente or not check_password_hash(docente.password, form.password.data):
             flask.flash('Invalid username or password.')
             return flask.redirect(flask.url_for('routes.login'))
+        else:
+            login_user(docente)
+            flask.flash('Logged in successfully.')
+            return flask.render_template('homepage.html', user=docente)
 
     if flask.request.referrer and 'logout' in flask.request.referrer:
         flask.flash('You need to log in to access this page.')  # Display an error message
         return flask.redirect(flask.url_for('routes.login'))
 
+    #return nothing
     return flask.render_template('login.html', form=form)
 
 @bp.route('/logout')
@@ -489,11 +491,13 @@ def modify_exam(idE):
     from db_setup import Esame, db
     from forms import Modify_Exam
 
-    form = Modify_Exam()
+    esame = Esame.query.filter_by(idE=idE).first()
+    form = Modify_Exam(obj=esame)
     #show_popup = False
     
    
     if form.validate_on_submit():
+        form.populate_obj(esame)
         idE = form.idE.data
         nome = form.nome.data
         anno_accademico = form.anno_accademico.data
@@ -508,29 +512,7 @@ def modify_exam(idE):
     db.session.commit()
     flask.flash('Esame aggiornato')
     esame=db.session.query(Esame).filter(Esame.idE == idE).first()
-    #da testare
-    #manca ruolo docente?
-    #mancano controlli di sicurezza (esame uguale ad un altro)
-        
-    #if request.method=='POST' and form.validate():
-        #flask.save_changes(form,idE)
-
-    """
-        if Esame.query.filter_by(idE=idE).first() is not None:
-            flask.flash('Esame già esistente', 'error')
-            #return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE, show_popup=show_popup))
-        else:
-            try:
-                #da cambiare add
-                db.session.add(esame)
-                db.session.commit()
-                print("Esame added successfully")
-                show_popup = True
-                #return flask.redirect(flask.url_for('routes.exam_page', form=form, idE=idE, show_popup=show_popup))
-            except Exception as e:
-                print("Error committing Esame:", e)
-    """
-
+    
     return flask.render_template('modify_exam.html', form=form, idE=idE, esame=esame)
 
 @bp.route('/modify_test/<string:idP>', methods=['GET', 'POST'])
@@ -563,9 +545,9 @@ def modify_prova(idP):
         prova.ora_prova_string = ora_prova.strftime("%H:%M")
         prova.data_scadenza = data_scadenza
 
-        db.session.commit()
-        flask.flash('Prova aggiornata')
-
+    db.session.commit()
+    flask.flash('Prova aggiornata')
+    
     prova = db.session.query(Prova).filter(Prova.idP == idP).first()
     lista_studenti = (
         db.session.query(Studente)
@@ -580,20 +562,29 @@ def modify_prova(idP):
 @bp.route('/verbalizza/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def verbalizza(idE):
-    from db_setup import Studente, db, Appelli, Prova, Esame
+    from db_setup import Studente, db, Appelli, Prova, Esame, Registrazione_esame
     
-    #mostrare solo gli studenti che hanno superato le prove che ammontano a 100 con la percentuale di superamento
+    #da modificare
+    #questa lista mostra solo un voto per ogni studente, anche se non passato
+    #deve mostrare in una riga, per ogni studente, tutti i voti di tutte le prove passate
     
-    #find the student that have passed the exam
-    lista_studenti = (
-        db.session.query(Studente)
+    #SELECT s.ids, p.idp, p.data, p.data_scadenza, p.tipo_voto, p.percentuale, a.voto
+    #FROM studente s join appelli a using(idS) join prova p using (idP)
+    #WHERE s.idS IN (SELECT idS FROM appelli WHERE stato_superamento = "True")
+    
+    
+    subquery = (
+        db.session.query(Appelli.idS)
+        .filter(Appelli.stato_superamento == True)
+        .subquery()
+    )
+
+    lista_voti_studenti = (
+        db.session.query(Studente.idS, Prova.idP, Prova.data, Prova.data_scadenza, Prova.tipo_voto, Prova.percentuale, Appelli.voto)
         .join(Appelli, Studente.idS == Appelli.idS)
-        .join(Prova, Appelli.idP == Prova.idP)
-        .join(Esame, Prova.idE == Esame.idE)
-        .filter(Esame.idE == idE, Appelli.stato_superamento == True)
-        .group_by(Esame.idE, Studente.idS)
-        .having(func.sum(Prova.percentuale) == 100)
+        .join(Prova, Prova.idP == Appelli.idP)
+        .filter(Studente.idS.in_(subquery))
         .all()
     )
     
-    return flask.render_template('verbalizzazione.html', idE=idE, lista_studenti=lista_studenti)
+    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti)

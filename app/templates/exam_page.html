@@ -9,30 +9,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Esame</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add your custom styles here */
+        .button-container {
+            margin-bottom: 20px;
+        }
+        #button_exam {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
-        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
-        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Informazioni" class="w3-container">
+    <div id="Informazioni" class="container">
         <h1>Informazioni sull'esame del corso</h1>
     </div>
 
-    <div id="Exam_Details">
+    <div id="Exam_Details" class="container">
         <h2>Docenti del corso:</h2>
         {% for docente, role_name in docenti_roles %}
             <p>{{ docente.nome }} {{ docente.cognome }} ({{ role_name }})</p>
         {% endfor %}
         
         {% if user_role == "Presidente" %}
-            <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'">Aggiungi membro</button>
-            <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'">Elimina membro</button>
+            <div class="button-container">
+                <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list', idE=esame.idE )}}'" class="btn btn-primary">Aggiungi membro</button>
+                <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'" class="btn btn-danger">Elimina membro</button>
+            </div>
         {% endif %}
 
         
@@ -42,9 +69,9 @@
         <p>CFU: {{ esame.cfu }}</p>
     </div>
 
-    <div id="ListaProve">
+    <div id="ListaProve" class="container">
         <h3>Lista delle prove:</h3>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Nome Prova</th>
@@ -59,22 +86,22 @@
                         <td>{{ prova.nome_prova }}</td>
                         <td>{{ prova.data }}</td>
                         <td>{{ prova.ora_prova }}</td>
-                        <td>{{ prova.data_scadenza}}</td>
+                        <td>{{ prova.data_scadenza }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     
-    <br>
-    <div class="button-container">
-        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.modify_exam', idE=esame.idE)}}'">Modifica esame</button>
-        <!--<button id="button_exam" type="button" onclick="confirmDelete()">Elimina esame</button>-->
-        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'">Aggiungi prova</button>
-        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.verbalizza', idE=esame.idE)}}'">Verbalizza</button>
+    <div class="container button-container">
+        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.modify_exam', idE=esame.idE)}}'" class="btn btn-primary">Modifica esame</button>
+        <button id="button_exam" type="button" onclick="confirmDelete()" class="btn btn-danger">Elimina esame</button>
+        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'" class="btn btn-primary">Aggiungi prova</button>
+        <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.verbalizza', idE=esame.idE)}}'" class="btn btn-primary">Verbalizza</button>
     </div>
-    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function confirmDelete() {
             var result = confirm("Conferma l'eliminazione dell'esame");

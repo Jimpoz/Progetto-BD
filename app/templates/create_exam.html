@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="../static/create-modify_exam-test.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +21,6 @@
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
         <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
@@ -31,29 +31,30 @@
         <h1>Crea Esame</h1>
     </div>
 
-    <form id="Crea Esame" method="POST" action="{{ url_for('routes.create_exam') }}"> 
+    <form id="Crea Esame" method="POST" action="{{ url_for('routes.create_exam') }}" class="container">
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.nome.label(class="w3-label") }}
-            {{ form.nome(class="w3-input w3-border", placeholder="Nome") }}
+            {{ form.nome.label(class="col-form-label font-weight-bold") }}
+            {{ form.nome(class="form-control", placeholder="Nome") }}
         </div>
         <div class="form-group">
-            {{ form.idE.label(class="w3-label") }}
-            {{ form.idE(class="w3-input w3-border", placeholder="Id Esame") }}
+            {{ form.idE.label(class="col-form-label font-weight-bold") }}
+            {{ form.idE(class="form-control", placeholder="Id Esame") }}
         </div>
         <div class="form-group">
-            {{ form.anno_accademico.label(class="w3-label") }}
-            {{ form.anno_accademico(class="w3-input w3-border", placeholder="Anno Accademico") }}
+            {{ form.anno_accademico.label(class="col-form-label font-weight-bold") }}
+            {{ form.anno_accademico(class="form-control", placeholder="Anno Accademico") }}
         </div>
         <div class="form-group">
-            {{ form.cfu.label(class="w3-label") }}
-            {{ form.cfu(class="w3-input w3-border", placeholder="CFU") }}
+            {{ form.cfu.label(class="col-form-label font-weight-bold") }}
+            {{ form.cfu(class="form-control", placeholder="CFU") }}
         </div>
         <div class="form-group">
-            {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+            {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
-    
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

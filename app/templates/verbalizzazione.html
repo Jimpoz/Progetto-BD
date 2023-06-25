@@ -9,52 +9,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='goback.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Verbalizzazione</title>
 </head>
 
 <body>
-    <ul>
-        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
-        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
-        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
-        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.homepage') }}">Homepage</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.create_exam') }}">Crea esame</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('routes.view_exams') }}">Lista esami</a>
+        </li>
+        <li class="nav-item ml-auto">
+            <a class="nav-link" href="{{ url_for('routes.login') }}">Logout</a>
+        </li>
     </ul>
 
-    <div id="Informazioni" class="w3-container">
-        <h1> Verbalizzazione </h1>
+    <div id="Informazioni" class="container">
+        <h1>Verbalizzazione</h1>
     </div>
 
-    <div id="ListaStudentiIscritti">
-        <h3>Lista degli Studenti iscritti:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Matricola</th>
-                    <th>Nome</th>
-                    <th>Cognome</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for studente in lista_studenti %}
-                <tr onclick="window.location.href='{{url_for('routes.student_page', idS=studente.idS)}}'">
-                    <td> {{ studente.idS }}</td>
-                    <td> {{ studente.nome }}</td>
-                    <td> {{ studente.cognome }}</td>
-                    <td>
-                        <button>Verbalizza</button>
-                    </td>
-                </tr>
-                
-                
-                {% endfor %}
-            </tbody>
-            
-        </table>
+    <div id="ListaStudentiIscritti" class="m1-2">
+        <h3>Lista degli Studenti che hanno superato le prove:</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Matricola</th>
+                        <th>idP</th>
+                        <th>Data</th>
+                        <th>Data Scadenza</th>
+                        <th>Tipo Voto</th>
+                        <th>Percentuale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, group in lista_voti_studenti|groupby(0) %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td colspan="5"></td>
+                    </tr>
+                    {% for record in group %}
+                    <tr>
+                        <td></td>
+                        <td>{{ record[1] }}</td>
+                        <td>{{ record[2] }}</td>
+                        <td>{{ record[3] }}</td>
+                        <td>{{ record[4] }}</td>
+                        <td>{{ record[5] }}</td>
+                    </tr>
+                    {% if loop.last %}
+                    <tr>
+                        <td colspan="5"></td>
+                        <td>
+                            <button onclick="" class="btn btn-primary">Verbalizza</button>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <br>
-        <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+        <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
     </div>
-    
-</body>
-
-</html>
