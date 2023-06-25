@@ -2,26 +2,15 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/student.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area Studente</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .student-info {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .student-info:hover {
-            background-color: #f8f9fa;
-        }
-    </style>
+    <title>Elimina Docente</title>
 </head>
 
 <body>
@@ -33,16 +22,18 @@
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Docente" class="container">
+    <div id="Docente">
         <h1>Lista Docenti</h1>
     </div>
+
     <br>
+
     <div id="Lista_docenti" class="container">
         <div class="row">
             {% for docente in lista_docenti %}
                 {% if docente.idD != current_user_id %}
                     <div class="col-md-4">
-                        <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}'); window.location.href='{{ url_for('routes.exam_page', idE=esame.idE) }}'" style="cursor: pointer;">
+                        <div class="student-info" onclick="deleteRow('{{ docente.idD }}', '{{ esame.idE }}'); window.location.href='{{ url_for('routes.exam_page', idE=esame.idE) }}'">
                             <p>ID: {{ docente.idD }}</p>
                             <p>Nome: {{ docente.nome }}</p>
                             <p>Cognome: {{ docente.cognome }}</p>
@@ -58,7 +49,6 @@
         </div>
     </div>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function deleteRow(docenteId, examId) {
             var requestBody = {
@@ -101,6 +91,6 @@
     </script>
     
     <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
-</body>
 
+</body>
 </html>

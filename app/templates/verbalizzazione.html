@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/exam_page.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="{{ url_for('static', filename='functions.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='goback.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Verbalizzazione</title>
 </head>
 
 <body>
+
     <ul>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
         <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
@@ -21,7 +21,7 @@
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Informazioni" class="container">
+    <div id="Verbalizzazione">
         <h1>Verbalizzazione</h1>
     </div>
 
@@ -37,6 +37,7 @@
                         <th>Data Scadenza</th>
                         <th>Tipo Voto</th>
                         <th>Percentuale</th>
+                        <th>Voto</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,10 +54,11 @@
                         <td>{{ record[3] }}</td>
                         <td>{{ record[4] }}</td>
                         <td>{{ record[5] }}</td>
+                        <td>{{ record[6] }}</td>
                     </tr>
                     {% if loop.last %}
                     <tr>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <td>
                             <button onclick="" class="btn btn-primary">Verbalizza</button>
                         </td>
@@ -67,6 +69,11 @@
                 </tbody>
             </table>
         </div>
+
         <br>
-        <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
     </div>
+
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
+
+</body>
+</html>

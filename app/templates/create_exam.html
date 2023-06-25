@@ -32,6 +32,7 @@
     </div>
 
     <form id="Crea Esame" method="POST" action="{{ url_for('routes.create_exam') }}" class="container">
+        
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}
         <div class="form-group">
@@ -54,7 +55,6 @@
             {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 </body>
 </html>

@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/create-modify_exam-test.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,33 +21,33 @@
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Create_Test" class="w3-container">
+    <div id="Create_Test">
         <h1>Aggiungi Prova</h1>
     </div>
 
-    <form id="create_test" method="POST" action="{{ url_for('routes.create_test', idE=idE) }}">
+    <form id="create_test" method="POST" action="{{ url_for('routes.create_test', idE=idE) }}", class="container">
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.idP.label(class="w3-label") }}
-            {{ form.idP(class="w3-input w3-border", placeholder="Id Prova") }}
+            {{ form.idP.label(class="col-form-label font-weight-bold") }}
+            {{ form.idP(class="form-control", placeholder="Id Prova") }}
         </div>
         <div class="form-group">
-            {{ form.nome_prova.label(class="w3-label") }}
-            {{ form.nome_prova(class="w3-input w3-border", placeholder="Nome Prova") }}
+            {{ form.nome_prova.label(class="col-form-label font-weight-bold") }}
+            {{ form.nome_prova(class="form-control", placeholder="Nome Prova") }}
         </div>
         <div class="form-group">
-            {{ form.tipo_prova.label(class="w3-label") }}
-            {{ form.tipo_prova(class="w3-input w3-border") }}
+            {{ form.tipo_prova.label(class="col-form-label font-weight-bold") }}
+            {{ form.tipo_prova(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.tipo_voto.label(class="w3-label") }}
-            {{ form.tipo_voto(class="w3-input w3-border", placeholder="Tipo Voto") }}
+            {{ form.tipo_voto.label(class="col-form-label font-weight-bold") }}
+            {{ form.tipo_voto(class="form-control", placeholder="Tipo Voto") }}
         </div>
 
         <div class="form-group">
             <p>Valore della prova (in percentuale)</p>
-            {{ form.percentuale(class="w3-input w3-border", placeholder="Percentuale") }}
+            {{ form.percentuale(class="form-control", placeholder="Percentuale") }}
         </div>
     
         <div class="form-group">
@@ -62,11 +63,11 @@
         </div>
     
         <div class="form-group">
-            {{ form.submit(class="w3-btn w3-red w3-hover-green w3-border-black") }}
+            {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
     
-</body>
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
-<button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+</body>
 </html>

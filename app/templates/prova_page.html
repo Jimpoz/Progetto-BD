@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/exam_page.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
         <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Informazioni" class="w3-container">
+    <div id="Informazioni">
         <h1> Informazioni sulla prova </h1>
     </div>
 
@@ -56,12 +57,14 @@
             
         </table>
     </div>
+
     <br>
-    <div class="button-container">
-        <button id="button_modifica_prova" type="button" onclick="window.location.href='{{url_for('routes.modify_prova', idP=prova.idP)}}'">Modifica prova</button>
-        <button id="button_elimina_prova" onclick="confirmDeleteProva()" type="button">Elimina prova</button>
+    
+    <div class="container button-container">
+        <button id="button_modifica_prova" type="button" onclick="window.location.href='{{url_for('routes.modify_prova', idP=prova.idP)}}'" class="btn btn-primary">Modifica prova</button>
+        <button id="button_elimina_prova" type="button" onclick="confirmDeleteProva()" class="btn btn-danger">Elimina prova</button>
     </div>
-    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
     <script>
         function confirmDeleteProva() {

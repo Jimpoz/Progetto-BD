@@ -2,38 +2,14 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/exam_page.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Esame</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Add your custom styles here */
-        .button-container {
-            margin-bottom: 20px;
-        }
-        #button_exam {
-            margin-right: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        tr:hover {
-            background-color: #f8f9fa;
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
@@ -61,7 +37,6 @@
                 <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'" class="btn btn-danger">Elimina membro</button>
             </div>
         {% endif %}
-
         
         <h2>Codice del corso: {{ esame.idE }}</h2>
         <p>Nome del corso: {{ esame.nome }}</p>
@@ -99,9 +74,7 @@
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.create_test', idE=esame.idE)}}'" class="btn btn-primary">Aggiungi prova</button>
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.verbalizza', idE=esame.idE)}}'" class="btn btn-primary">Verbalizza</button>
     </div>
-    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function confirmDelete() {
             var result = confirm("Conferma l'eliminazione dell'esame");
@@ -110,5 +83,6 @@
             }
         }
     </script>
+
 </body>
 </html>
