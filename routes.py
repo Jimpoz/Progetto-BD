@@ -20,8 +20,7 @@ def login():
     form = Login_form()
 
     if current_user.is_authenticated:
-        logout_user()
-        flask.session.clear()
+        return flask.redirect(flask.url_for('routes.logout'))  # Redirect to the logout route
 
     if form.validate_on_submit():
         docente = Docente.query.filter_by(email=form.email.data).first()  # parametrizzato
@@ -31,22 +30,22 @@ def login():
         else:
             login_user(docente)
             flask.flash('Logged in successfully.')
-            return flask.render_template('homepage.html', user=docente)
+            return flask.redirect(flask.url_for('routes.homepage'))  # Redirect to the homepage route
 
     if flask.request.referrer and 'logout' in flask.request.referrer:
         flask.flash('You need to log in to access this page.')  # Display an error message
-        return flask.redirect(flask.url_for('routes.login'))
-
-    #return nothing
+    
     return flask.render_template('login.html', form=form)
 
-@bp.route('/logout')
+
+@bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     from flask_login import logout_user
-
+    
     if current_user.is_authenticated:
         logout_user()
+        flask.session.clear()
 
     response = flask.redirect(flask.url_for('routes.login'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -588,3 +587,12 @@ def verbalizza(idE):
     )
     
     return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti)
+
+@bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
+@login_required
+def verbalizza_esame(idE,idS):
+    from db_setup import db, Studente, Esame, Registrazione_esame
+    
+    #da aggiungere
+    
+    return flask.render_template('verbalizzazione.html', idE=idE)

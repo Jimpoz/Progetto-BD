@@ -29,3 +29,16 @@
 .student-list {
   position: relative;
 }
+
+.student-info-container {
+  max-width: 1000px; 
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.student-info-container:hover {
+  background-color: #ddd;
+}

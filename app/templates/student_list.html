@@ -28,7 +28,7 @@
 
     <div class="student-list">
         {% for studente in lista_studenti %}
-            <div class="student-info" onclick="window.location.href='{{url_for('routes.student_page', idS=studente.idS)}}'">
+            <div class="student-info-container" onclick="window.location.href='{{url_for('routes.student_page', idS=studente.idS)}}'">
                 <p>ID: {{ studente.idS }}</p>
                 <p>Nome: {{ studente.nome }}</p>
                 <p>Cognome: {{ studente.cognome }}</p>
