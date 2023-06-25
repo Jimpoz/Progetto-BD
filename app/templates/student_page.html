@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='student_page.css') }}">
-    <script src="{{ url_for('static', filename='functions.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='goback.css') }}">
+    <link rel="stylesheet" href="../static/student_page.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagine studente</title>
-    <div id="Studente" class="w3-container">
-        <h1> Informazioni sullo studente</h1>
-    </div>
+    <title>Pagina studente</title>
 </head>
 
 <body>
+
+    <ul>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
+    </ul>
+
+    <div id="Studente">
+        <h1> Informazioni sullo studente</h1>
+    </div>
+
     <div id="Student_info">
         <p>Nome: {{ studente.nome }}</p>
         <p>Cognome: {{ studente.cognome }}</p>
         <p>Matricola: {{ studente.idS }}</p>
     </div>
+    
     <div id="Lista_esami_iscritti">
         <h2>Lista esami iscritti</h2>
         <table>
@@ -29,7 +39,7 @@
                     <th>Nome Esame</th>
                     <th>Anno Accademico</th>
                     <th>CFU</th>
-                    <th> Appello</th>
+                    <th>Appello</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,7 +53,9 @@
             </tbody>
         </table>
     </div>
+
     <br>
+
     <div id="Lista_esami_passati">
         <h2>Lista esami passati</h2>
         <table>
@@ -70,8 +82,9 @@
             </tbody>
         </table>
     </div>
+    
     <br>
 
-    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 </body>
 </html>

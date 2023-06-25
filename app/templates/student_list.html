@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../static/student.css">
-    <link rel="stylesheet" href="../static/goback.css">
     <link rel="stylesheet" href="../static/navbar.css">
+    <link rel="stylesheet" href="../static/goback.css">
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,17 +15,19 @@
 <body>
 
     <ul>
-        <li><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
-        <li><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
-        <li><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
         <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
-    <div id="Matricola" class="w3-container">
+    <div id="Matricola">
         <h1>Lista Matricole</h1>
     </div>
+
     <br>
-    <div id="Lista_Studenti"  class="student-list" style="position: relative;">
+
+    <div class="student-list">
         {% for studente in lista_studenti %}
             <div class="student-info" onclick="window.location.href='{{url_for('routes.student_page', idS=studente.idS)}}'">
                 <p>ID: {{ studente.idS }}</p>
@@ -34,6 +37,6 @@
         {% endfor %}
     </div>
     
-    <button id="goback" onclick="goBack()" class="button-goback">Indietro</button>
+    <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 </body>
 </html>

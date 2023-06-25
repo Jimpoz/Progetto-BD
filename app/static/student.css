@@ -4,19 +4,9 @@
   padding-left: 20px;
 }
 
-.student-info,
 .docente-info {
-    border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 10px;
-  }
-  
-  .student-info p {
-    margin: 5px 0;
-  }
-  
-  .student-list {
-    position: relative;
 }
 
 .student-info {
@@ -30,4 +20,12 @@
 
 .student-info:hover {
     background-color: #f0f0f0;
+}
+
+.student-info p {
+  margin: 5px 0;
+}
+
+.student-list {
+  position: relative;
 }

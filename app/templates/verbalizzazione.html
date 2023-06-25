@@ -14,19 +14,11 @@
 </head>
 
 <body>
-    <ul class="nav">
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes.homepage') }}">Homepage</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes.create_exam') }}">Crea esame</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes.view_exams') }}">Lista esami</a>
-        </li>
-        <li class="nav-item ml-auto">
-            <a class="nav-link" href="{{ url_for('routes.login') }}">Logout</a>
-        </li>
+    <ul>
+        <li style="float:right"><a href="{{ url_for('routes.login') }}">Logout</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.view_exams') }}">Lista esami</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.create_exam') }}">Crea esame</a></li>
+        <li style="float:right"><a href="{{ url_for('routes.homepage') }}">Homepage</a></li>
     </ul>
 
     <div id="Informazioni" class="container">

@@ -16,14 +16,14 @@ form {
 }
 
 .search-bar input[type="text"] {
-  padding:10px;
+  padding: 10px;
   font-size: medium;
   width: 300px;
 }
 
 .search-bar input[type="submit"] {
   float:right;
-  padding-left:20px;
+  padding-left: 20px;
   padding: 10px 20px;
   background-color: #8B0000;
   border: none;
