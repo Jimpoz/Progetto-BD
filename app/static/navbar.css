@@ -37,8 +37,8 @@ ul {
   }
 
   a:hover {
-    color: inherit; /* Use the same color as the parent element on hover */
-    text-decoration: none; /* Remove underline on hover */
+    color: inherit;
+    text-decoration: none; 
   }
   
   /*.active {

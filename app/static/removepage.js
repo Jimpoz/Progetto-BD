@@ -5,7 +5,6 @@ function removePageFromHistory() {
     });
   }
   
-  // Call the function when the page loads
   window.onload = function () {
     removePageFromHistory();
   };
