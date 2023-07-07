@@ -138,7 +138,6 @@ class Registrazione_esame(db.Model):
 '''
 #check e trigger da aggiungere
 
-se la lista appelli è vuote di uno studente allora nella verbalizzazione risulta assente
 se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
 uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
 un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare

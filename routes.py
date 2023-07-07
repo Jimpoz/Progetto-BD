@@ -118,9 +118,23 @@ def search_student():
     if request.method == 'POST':
         search_query = request.form['search']
         
-        # Query that checks studente through the matricola with the like operator
-        query = db.session.query(Studente).filter(Studente.idS.like('%'+search_query+'%')).all()
-        
+        # Query that checks studente through the matricola with the like operator or the Nome or Cognome or Nome + Cognome
+        # for the query of the nome search only those who start with those letters, not only containing
+        # for the query of Nome + Cognome also count the whitespace in the middle
+        # also count the possibility of Cognome + Nome //to do
+        query = db.session.query(Studente).filter(or_(Studente.idS.like('%' + search_query + '%'),
+                                                         Studente.nome.like(search_query + '%'),
+                                                         Studente.cognome.like(search_query + '%'),
+                                                         Studente.nome.like('%' + search_query + '%'),
+                                                         Studente.cognome.like('%' + search_query + '%'),
+                                                         Studente.nome.like('%' + search_query + ' %'),
+                                                         Studente.cognome.like('%' + search_query + ' %'),
+                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
+                                                         Studente.cognome.like('%' + search_query + ' %' + '%'),
+                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
+                                                         Studente.cognome.like('%' + search_query + ' %' + '%'),
+                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
+                                                         Studente.cognome.like('%' + search_query + ' %' + '%'))).all()
         lista_studenti = query
         user = Docente.query.get(current_user.idD)
         
@@ -170,7 +184,7 @@ def docenti_list_del():
     idE = request.args.get('idE')
     esame = db.session.query(Esame).filter(Esame.idE == idE).first()
     lista_docenti = db.session.query(Docente).all()
-
+    
     # Fetch the roles of the professors for the specific exam
     lista_ruoli = (
         db.session.query(Creazione_esame.idD, Creazione_esame.ruolo_docente)
@@ -591,8 +605,17 @@ def verbalizza(idE):
 @bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
 @login_required
 def verbalizza_esame(idE,idS):
-    from db_setup import db, Studente, Esame, Registrazione_esame
+    from db_setup import db, Studente, Esame, Registrazione_esame, Appelli, Prova
     
-    #da aggiungere
+    #algorithm that returns the final evaluation based also on the weight of each test
+    
+    #example: 22 (50% of 100) + 18 (30% of 100) + 26 (20% of 100)
+            # (22 * 0.5) + (18 * 0.3) + (26 * 0.2) = 21.6 (rounded to 22)
+            
+    #get the evaluation for those who took the complete exam and also those who took all the tests
+    #no need, it returns the idE and idS of that specific student once clicked the "Verbalizza" button
+    
+    res = db.session.query() #to be completed
+    
     
     return flask.render_template('verbalizzazione.html', idE=idE)
