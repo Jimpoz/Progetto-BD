@@ -11,6 +11,7 @@ def create_app():
     login_manager.login_view = 'routes.login'
     app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(app.root_path, 'database.db')
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/Flask'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     app.config['SECRET_KEY'] = 'secret_key'
