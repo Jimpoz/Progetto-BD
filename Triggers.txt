@@ -1,0 +1,19 @@
+CREATE TRIGGER Valid
+CREATE FUNCTION Is_Valid RETURNS TRIGGER
+AS $$
+BEGIN
+    IF( CURRENT_DATE()>(SELECT p.data_scadenza
+                        FROM prova p
+                        WHERE new.idE==p.idE))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+BEFORE UPDATE OR INSERT
+ON registrazione_esame
+FOR EACH ROW
+EXECUTE FUNCTION Is_Valid
+
+
