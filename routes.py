@@ -617,5 +617,14 @@ def verbalizza_esame(idE,idS):
     
     res = db.session.query() #to be completed
     
+    #il trigger controlla se le prove sono valide, devo fare un trigger anche per vedere se sono superate?
+    #UPDATE registrazione_esame
+    #SET voto=formula (dove vedo le percentuali?)
+    #WHERE idS=idS passato
+    prova = Appelli.query.filter_by(idP=idP).first()
+    mycursor=db.cursor()
+    sql="UPDATE registrazione_esame SET voto=prova.voto*percentuale da inserire WHERE idE=idE"
+    mycursor.execute(sql)
+    db.commit()
     
     return flask.render_template('verbalizzazione.html', idE=idE)
