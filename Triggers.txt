@@ -117,3 +117,17 @@ speciali (es. essere disponibili solo in un certo appello d’esame).
 
 
 
+'''
+#check e trigger da aggiungere
+
+se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
+uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
+un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
+una volta verbalizzato un esame non può essere eliminato dallo studente
+uno studente non può iscriversi ad un esame che non esiste
+uno studente non può iscriversi a più esami lo stesso giorno
+un docente non può creare 2 prove identiche in 2 esami diversi
+
+#da aggiungere
+
+'''

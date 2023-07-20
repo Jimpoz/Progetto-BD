@@ -3,11 +3,18 @@ from flask_login import UserMixin;
 from werkzeug.security import generate_password_hash, check_password_hash
 from alembic import op
 from sqlalchemy import Enum
+import enum
 
 db = SQLAlchemy()
 
+class Tipo_Prova(enum.Enum):
+    scritto = "scritto"
+    orale = "orale"
+    pratico = "pratico"
+    completo = "completo"
+
 class Docente(UserMixin, db.Model):
-    idD = db.Column(db.String(100), primary_key=True, unique = True)
+    idD = db.Column(db.String(200), primary_key=True, unique = True)
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     email = db.Column(db.String(100), unique = True)
@@ -58,19 +65,21 @@ class Esame( db.Model):
         self.anno_accademico = anno_accademico
         self.cfu = cfu
 
-class Prova( db.Model ):
+class Prova(db.Model):
+    __tablename__ = 'prova'
+
     idP = db.Column(db.String(100), primary_key=True)
     nome_prova = db.Column(db.String(100))
-    tipo_prova = db.Column(Enum('scritto', 'orale', 'pratico', 'completo'), name='tipo_prova')
+    tipo_prova = db.Column(db.Enum(Tipo_Prova))
     tipo_voto = db.Column(db.String(100))
     percentuale = db.Column(db.Integer)
     data = db.Column(db.Date)
     ora_prova = db.Column(db.String(100))
     data_scadenza = db.Column(db.Date)
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
-    idD = db.Column(db.Integer, db.ForeignKey('docente.idD'))
-    
-    def __init__( self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, percentuale ,data, ora_prova, data_scadenza):
+    idD = db.Column(db.String(100), db.ForeignKey('docente.idD'))
+
+    def __init__(self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, percentuale, data, ora_prova, data_scadenza):
         self.idP = idP
         self.idE = idE
         self.idD = idD
@@ -81,6 +90,7 @@ class Prova( db.Model ):
         self.data = data
         self.ora_prova = ora_prova
         self.data_scadenza = data_scadenza
+
     
 # tabella molti a molti
 class Appelli(db.Model):
@@ -135,17 +145,3 @@ class Registrazione_esame(db.Model):
         self.voto = voto
         self.data_superamento = data_superamento
         
-'''
-#check e trigger da aggiungere
-
-se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
-uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
-un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
-una volta verbalizzato un esame non può essere eliminato dallo studente
-uno studente non può iscriversi ad un esame che non esiste
-uno studente non può iscriversi a più esami lo stesso giorno
-un docente non può creare 2 prove identiche in 2 esami diversi
-
-#da aggiungere
-
-'''
