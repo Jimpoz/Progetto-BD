@@ -1,19 +1,119 @@
-CREATE TRIGGER Valid
+Viene richiesto di sviluppare un applicativo per la gestione di esami universitari. I docenti possono creare
+nuovi esami, ciascuno dei quali richiede il superamento di n ≥ 1 prove. 
+
+//già implementato in BD
+
+Quando tutte le n prove sono state
+superate e sono ancora valide, `e possibile registrare il voto. 
+
+//sono superate lo controlla già il BD?
+
 CREATE FUNCTION Is_Valid RETURNS TRIGGER
 AS $$
 BEGIN
-    IF( CURRENT_DATE()>(SELECT p.data_scadenza
+    //https://www.geeksforgeeks.org/sql-query-to-check-if-date-is-greater-than-today-in-sql/
+    IF( GETDATE()> ANY (SELECT p.data_scadenza   
                         FROM prova p
                         WHERE new.idE==p.idE))
+                        //se la sottoquery dà più risultati è sbagliata, ma se uso any me li controlla tutti
         THEN RETURN NULL
     END IF
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
 
+CREATE TRIGGER Valid
 BEFORE UPDATE OR INSERT
 ON registrazione_esame
 FOR EACH ROW
 EXECUTE FUNCTION Is_Valid
+
+//manca la verbalizzazione
+
+Ogni studente pu`o sostenere una delle prove ad
+uno degli appelli.
+
+//manca il trigger che impedisce di iscriversi a più di uno?
+
+Quando si supera una prova, il suo superamento ha una data che registra quando `e stata
+sostenuta e una data che registra la sua scadenza. Dopo la scadenza una prova non `e pi`u valida: rimane
+nel sistema, ma dal punto di vista della registrazione `e come se non fosse stata superata.
+
+//trigger creato sopra
+
+Un’altra ragione
+di invalidazione di una prova `e il sostenimento della stessa prova ad un appello successivo. Se l’appello pi`u
+recente `e superato, allora il voto precedente si invalida e quello nuovo ne prende il posto. Se invece l’appello
+pi`u recente non `e superato, la prova precedente viene invalidata e si registra la nuova come un fallimento.
+
+CREATE FUNCTION Is_Replaced RETURNS TRIGGER
+AS $$
+BEGIN
+    //se trovo la stessa prova registrata per lo stesso studente
+    IF(new.idP IN ( SELECT idP
+                    FROM Appelli)
+        AND new.idS=( SELECT idS
+                      FROM Appelli
+                      WHERE idP=new.idP))
+        //aggiorno solo i valori che effettivamente cambiano e non metto che lo stato di superamento è true, potrebbe essere anche false
+        UPDATE Appelli
+        SET voto=new.voto, stato_superamento=new.stato_superamento
+        WHERE idP=new.idP AND idS=new.idS
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Sostitution
+BEFORE INSERT
+ON Appelli
+FOR EACH ROW
+EXECUTE FUNCTION Is_Replaced 
+
+Il sistema deve essere in grado di visualizzare lo stato di studenti (prove valide sostenute, storico delle
+prove sostenute...) ed appelli (studenti che hanno superato le diverse prove). 
+
+//dovremmo aggiungere sezioni nel sito o è a posto cosi?
+
+Deve essere possibile ottenere
+l’elenco degli studenti che sono in condizione di avere l’esame registrato (ma non lo hanno ancora fatto)
+perch`e tutte le n prove sono superate e valide, mostrando per ciascuno le caratteristiche delle prove che
+abilitano la registrazione dell’esame.
+
+//dovrebbe essere la sezione verbalizzazione, che è da finalizzare
+
+Vengono forniti alcuni spunti possibili per arricchire lo scenario, senza pretesa di esaustivit`a:
+ Ogni prova ha una diversa tipologia (scritto, orale, progetto...) 
+
+//OK
+
+ed un diverso tipo di ricaduta sul
+superamento dell’esame (idoneit`a, voto che contribuisce alla media pesata, bonus al voto...). Il docente
+deve poter configurare questo aspetto dell’esame, andando a definire i criteri per la valutazione finale.
+
+//abbiamo fatto media pesata, i bonus e l'idoneità forse è da finalizzare?
+
+ E’ possibile definire dei vincoli sulle prove d’esame, richiedendo per esempio che la discussione del
+progetto debba essere effettuata solo dopo che l’esame scritto `e stato superato. 
+
+//Possibile trigger
+
+Certe prove d’esame
+potrebbero essere opzionali, cio`e lo studente pu`o scegliere se svolgerle o meno, o mutuamente esclusive
+con altre, cio`e lo studente deve scegliere una fra pi`u opzioni disponibili.
+
+//Possibile trigger
+
+ Le diverse prove d’esame possono essere gestite da docenti diversi, come nel caso dei compitini. In
+questo caso un docente non pu`o interferire con la valutazione data da un altro docente, per`o deve essere
+possibile avere visibilit`a dell’esame nel suo complesso.
+
+//OK, questi sono i ruoli
+
+ I compitini potrebbero essere soggetti a regole
+speciali (es. essere disponibili solo in un certo appello d’esame).
+
+//Possibile trigger
+
 
 
