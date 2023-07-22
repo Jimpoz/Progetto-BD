@@ -4,7 +4,7 @@ from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
 from datetime import datetime
 from flask import escape
-from sqlalchemy import and_, func, not_, or_, any_, exists, case
+from sqlalchemy import and_, func, not_, or_, any_, exists, case, cast, String
 from sqlalchemy.orm import joinedload
 
 login_manager = LoginManager()
@@ -71,34 +71,36 @@ def load_user(user_id):
 def create_exam():
     from db_setup import Esame, Docente, Creazione_esame, db
     from forms import Create_Exam
+    from flask import request, flash, redirect, render_template, url_for
     from flask_login import current_user
-    import flask
-    
+
     form = Create_Exam()
     show_popup = False
-    
+
     if form.validate_on_submit():
         idE = form.idE.data
         nome = form.nome.data
         anno_accademico = form.anno_accademico.data
         cfu = form.cfu.data
-        esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu)
-        
-        if Esame.query.filter_by(idE=idE).first() is not None:
-            flask.flash('Esame già esistente', 'error')
-            return flask.redirect(flask.url_for('routes.create_exam', form=form, show_popup=show_popup))
+
+        # Check if the Esame already exists
+        if Esame.query.filter_by(idE=idE).first():
+            flash('Esame già esistente', 'error')
         else:
+            # Add the new Esame to the database
+            esame = Esame(idE=idE, nome=nome, anno_accademico=anno_accademico, cfu=cfu)
             db.session.add(esame)
             db.session.commit()
+
+            # Add the record to Creazione_esame
             record = Creazione_esame(idE=idE, idD=current_user.idD, ruolo_docente='Presidente')
             db.session.add(record)
             db.session.commit()
+
             show_popup = True
-            return flask.redirect(flask.url_for('routes.create_exam', form=form, show_popup=show_popup))
-    
-    return flask.render_template('create_exam.html', form=form, show_popup=show_popup)
+            flash('Esame creato con successo', 'success')
 
-
+    return render_template('create_exam.html', form=form, show_popup=show_popup)
 
 @bp.route('/view_exams', methods=['GET', 'POST'])
 @login_required
@@ -122,19 +124,24 @@ def search_student():
         # for the query of the nome search only those who start with those letters, not only containing
         # for the query of Nome + Cognome also count the whitespace in the middle
         # also count the possibility of Cognome + Nome //to do
-        query = db.session.query(Studente).filter(or_(Studente.idS.like('%' + search_query + '%'),
-                                                         Studente.nome.like(search_query + '%'),
-                                                         Studente.cognome.like(search_query + '%'),
-                                                         Studente.nome.like('%' + search_query + '%'),
-                                                         Studente.cognome.like('%' + search_query + '%'),
-                                                         Studente.nome.like('%' + search_query + ' %'),
-                                                         Studente.cognome.like('%' + search_query + ' %'),
-                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
-                                                         Studente.cognome.like('%' + search_query + ' %' + '%'),
-                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
-                                                         Studente.cognome.like('%' + search_query + ' %' + '%'),
-                                                         Studente.nome.like('%' + search_query + ' %' + '%'),
-                                                         Studente.cognome.like('%' + search_query + ' %' + '%'))).all()
+        query = db.session.query(Studente).filter(
+            or_(
+                cast(Studente.idS, String).like('%' + search_query + '%'),
+                Studente.nome.like(search_query + '%'),
+                Studente.cognome.like(search_query + '%'),
+                Studente.nome.like('%' + search_query + '%'),
+                Studente.cognome.like('%' + search_query + '%'),
+                Studente.nome.like('% ' + search_query + '%'),
+                Studente.cognome.like('% ' + search_query + '%'),
+                cast(Studente.nome, String).like('%' + search_query + '%'),
+                cast(Studente.cognome, String).like('%' + search_query + '%'),
+                cast(Studente.nome, String).like('%' + search_query + '%'),
+                cast(Studente.cognome, String).like('%' + search_query + '%'),
+                cast(Studente.nome, String).like('%' + search_query + '%'),
+                cast(Studente.cognome, String).like('%' + search_query + '%')
+            )
+        ).all()
+
         lista_studenti = query
         user = Docente.query.get(current_user.idD)
         
@@ -584,7 +591,7 @@ def verbalizza(idE):
     #SELECT s.ids, p.idp, p.data, p.data_scadenza, p.tipo_voto, p.percentuale, a.voto
     #FROM studente s join appelli a using(idS) join prova p using (idP)
     #WHERE s.idS IN (SELECT idS FROM appelli WHERE stato_superamento = "True")
-    
+
     
     subquery = (
         db.session.query(Appelli.idS)
@@ -617,14 +624,5 @@ def verbalizza_esame(idE,idS):
     
     res = db.session.query() #to be completed
     
-    #il trigger controlla se le prove sono valide, devo fare un trigger anche per vedere se sono superate?
-    #UPDATE registrazione_esame
-    #SET voto=formula (dove vedo le percentuali?)
-    #WHERE idS=idS passato
-    prova = Appelli.query.filter_by(idP=idP).first()
-    mycursor=db.cursor()
-    sql="UPDATE registrazione_esame SET voto=prova.voto*percentuale da inserire WHERE idE=idE"
-    mycursor.execute(sql)
-    db.commit()
     
     return flask.render_template('verbalizzazione.html', idE=idE)
