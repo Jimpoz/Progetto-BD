@@ -623,7 +623,7 @@ def verbalizza_esame(idE,idS):
     #WHERE idS=idS passato
     prova = Appelli.query.filter_by(idP=idP).first()
     mycursor=db.cursor()
-    sql="UPDATE registrazione_esame SET voto=prova.voto*percentuale da inserire WHERE idE=idE"
+    sql="UPDATE registrazione_esame SET voto=prova.voto*prova.percentuale WHERE idE=idE"
     mycursor.execute(sql)
     db.commit()
     

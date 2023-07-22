@@ -6,8 +6,27 @@ nuovi esami, ciascuno dei quali richiede il superamento di n ≥ 1 prove.
 Quando tutte le n prove sono state
 superate e sono ancora valide, `e possibile registrare il voto. 
 
-//sono superate lo controlla già il BD?
+//Trigger per superamento
+CREATE FUNCTION Is_Passed RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(FALSE=ANY(SELECT stato_superamento
+                 FROM prova p
+                 WHERE new.idE==p.idE))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
 
+CREATE TRIGGER Passed
+BEFORE UPDATE? OR INSERT
+ON registrazione_esame
+FOR EACH ROW?
+EXECUTE FUNCTION Is_Passed
+
+
+//Trigger per validità
 CREATE FUNCTION Is_Valid RETURNS TRIGGER
 AS $$
 BEGIN
@@ -23,9 +42,9 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Valid
-BEFORE UPDATE OR INSERT
+BEFORE UPDATE? OR INSERT
 ON registrazione_esame
-FOR EACH ROW
+FOR EACH ROW?
 EXECUTE FUNCTION Is_Valid
 
 //manca la verbalizzazione
@@ -34,6 +53,8 @@ Ogni studente pu`o sostenere una delle prove ad
 uno degli appelli.
 
 //manca il trigger che impedisce di iscriversi a più di uno?
+//lo interpreto come che non posso avere lo stesso studente iscritto allo stesso appello 2 volte
+//MANCA TRIGGER 
 
 Quando si supera una prova, il suo superamento ha una data che registra quando `e stata
 sostenuta e una data che registra la sua scadenza. Dopo la scadenza una prova non `e pi`u valida: rimane
@@ -46,6 +67,7 @@ di invalidazione di una prova `e il sostenimento della stessa prova ad un appell
 recente `e superato, allora il voto precedente si invalida e quello nuovo ne prende il posto. Se invece l’appello
 pi`u recente non `e superato, la prova precedente viene invalidata e si registra la nuova come un fallimento.
 
+//Trigger sostituizione voto
 CREATE FUNCTION Is_Replaced RETURNS TRIGGER
 AS $$
 BEGIN
@@ -65,9 +87,9 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Sostitution
-BEFORE INSERT
+AFTER INSERT
 ON Appelli
-FOR EACH ROW
+FOR EACH STATEMENT
 EXECUTE FUNCTION Is_Replaced 
 
 Il sistema deve essere in grado di visualizzare lo stato di studenti (prove valide sostenute, storico delle
@@ -120,13 +142,53 @@ speciali (es. essere disponibili solo in un certo appello d’esame).
 '''
 #check e trigger da aggiungere
 
-se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
+//se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
 uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
 un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
 una volta verbalizzato un esame non può essere eliminato dallo studente
 uno studente non può iscriversi ad un esame che non esiste
 uno studente non può iscriversi a più esami lo stesso giorno
 un docente non può creare 2 prove identiche in 2 esami diversi
+
+//forse obsoleti
+un docente non può creare 2 prove/esami con stessi id
+
+CREATE FUNCTION Is_Test_Double RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS(SELECT *
+                FROM prova p
+                WHERE new.nome_prova=p.nome_prova))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Test_Name
+BEFORE INSERT OR UPDATE
+ON prova
+FOR EACH ROW
+EXECUTE FUNCTION Is_Test_Double 
+
+//creazione_esame deve diventare esame
+CREATE FUNCTION Is_Exam_Double RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS(SELECT *
+                FROM esame e
+                WHERE new.nome=e.nome))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Exam_Name
+BEFORE INSERT OR UPDATE
+ON esame
+FOR EACH ROW
+EXECUTE FUNCTION Is_Exam_Double 
 
 #da aggiungere
 
