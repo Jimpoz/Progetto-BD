@@ -425,7 +425,6 @@ def student_page(idS):
         .all()
     )
 
-    
     return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=lista_esami_passati)
 
 @bp.route('/delete_exam/<string:idE>', methods=['GET', 'POST'])
@@ -467,19 +466,22 @@ def delete_exam(idE):
 @bp.route('/delete_prova/<string:idP>', methods=['GET', 'POST'])
 @login_required
 def delete_prova(idP):
-    from db_setup import Prova, Appelli, Esame,Docente, Creazione_esame, db
-    
-    prova = Prova.query.filter_by(idP=idP).first()
+    from db_setup import Prova, Appelli, Esame, Docente, Creazione_esame, db
+
+    prova = Prova.query.get(idP)
+    if not prova:
+        return flask.flash('Prova not found', 'error')
+
     esame = Esame.query.filter_by(idE=prova.idE).first()
     idE = esame.idE
-    #find all appelli with that prova
+
     appelli = Appelli.query.filter_by(idP=idP).all()
     try:
         for appello in appelli:
             db.session.delete(appello)
         db.session.delete(prova)
         db.session.commit()
-        flask.flash('Prova eliminata correttamente')
+        flask.flash('Prova eliminata correttamente', 'success')
     except Exception as e:
         print("Error deleting prova:", e)
     
@@ -528,8 +530,9 @@ def modify_exam(idE):
         esame.nome=nome
         esame.anno_accademico=anno_accademico
         esame.cfu=cfu
-
-    db.session.commit()
+        db.session.commit()
+        return redirect(url_for('routes.exam_page', idE=idE))
+    
     flask.flash('Esame aggiornato')
     esame=db.session.query(Esame).filter(Esame.idE == idE).first()
     
