@@ -18,7 +18,7 @@ class Docente(UserMixin, db.Model):
     nome = db.Column(db.String(100))
     cognome = db.Column(db.String(100))
     email = db.Column(db.String(100), unique = True)
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(200))
     
     def set_password(self, password):
         self.password = generate_password_hash(password)

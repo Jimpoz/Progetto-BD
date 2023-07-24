@@ -24,7 +24,7 @@
     <div id="Informazioni" class="container">
         <h1>Informazioni sull'esame del corso</h1>
     </div>
-
+    <hr>
     <div id="Exam_Details" class="container">
         <h2>Docenti del corso:</h2>
         {% for docente, role_name in docenti_roles %}
@@ -37,7 +37,7 @@
                 <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.docenti_list_del', idE=esame.idE )}}'" class="btn btn-danger">Elimina membro</button>
             </div>
         {% endif %}
-        
+        <hr>
         <h2>Codice del corso: {{ esame.idE }}</h2>
         <p>Nome del corso: {{ esame.nome }}</p>
         <p>Anno Accademico: {{ esame.anno_accademico }}</p>
@@ -45,18 +45,13 @@
     </div>
 
     <div id="ListaProve" class="container">
-        <h3>Lista delle prove:</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nome Prova</th>
-                    <th>Data</th>
-                    <th>Ora</th>
-                    <th>Scadenza</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for prova in lista_prove %}
+        <h2>LISTA DELLE PROVE</h2>
+        <hr>
+        <div class="sessione" id="SessioneInvernale">
+            <h4>Sessione invernale:</h4>
+            <table class="table">
+                <!-- Render only the prova records with date in January or February -->
+                {% for prova in lista_prove if prova.data.month in [1, 2] %}
                     <tr onclick="window.location.href='{{url_for('routes.prova_page', idP=prova.idP)}}'">
                         <td>{{ prova.nome_prova }}</td>
                         <td>{{ prova.data }}</td>
@@ -64,9 +59,43 @@
                         <td>{{ prova.data_scadenza }}</td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+
+                
+
+            </table>
+        </div>
+
+        <div class="sessione" id="SessioneEstiva">
+            <h4>Sessione estiva:</h4>
+            <table class="table">
+                <!-- Render only the prova records with date in June or July -->
+                {% for prova in lista_prove if prova.data.month in [6, 7] %}
+                    <tr onclick="window.location.href='{{url_for('routes.prova_page', idP=prova.idP)}}'">
+                        <td>{{ prova.nome_prova }}</td>
+                        <td>{{ prova.data }}</td>
+                        <td>{{ prova.ora_prova }}</td>
+                        <td>{{ prova.data_scadenza }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="sessione" id="SessioneAutunnale">
+            <h4>Sessione autunnale:</h4>
+            <table class="table">
+                <!-- Render only the prova records with date in August or September -->
+                {% for prova in lista_prove if prova.data.month in [8, 9] %}
+                    <tr onclick="window.location.href='{{url_for('routes.prova_page', idP=prova.idP)}}'">
+                        <td>{{ prova.nome_prova }}</td>
+                        <td>{{ prova.data }}</td>
+                        <td>{{ prova.ora_prova }}</td>
+                        <td>{{ prova.data_scadenza }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
+
     
     <div class="container button-container">
         <button id="button_exam" type="button" onclick="window.location.href='{{url_for('routes.modify_exam', idE=esame.idE)}}'" class="btn btn-primary">Modifica esame</button>
