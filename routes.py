@@ -596,7 +596,7 @@ def verbalizza(idE):
         .join(Prova, Prova.idP == Appelli.idP)
         .filter(Appelli.stato_superamento == True)
         .group_by(Appelli.idS)
-        .having(func.sum(Prova.percentuale) == 100)
+        .having(func.sum(Prova.percentuale) == 100 and func.sum(Prova.percentuale) <=100)
         .subquery()
     )
 
@@ -627,6 +627,9 @@ def verbalizza_esame(idE,idS):
     
     #fixare verbalizza, prende anche prove insufficienti
     #per esempio se uno fallisce mod1 ma poi fa il completo giusto prende entrambi
+    
+    #if a test does not have a percentage weight on the final score it will be represented through a number n or a +n (n indicates the points to add at the final score)
+    
     subquery = (
         db.session.query(Appelli.idS)
         .filter(Appelli.stato_superamento == True)
