@@ -6,8 +6,27 @@ nuovi esami, ciascuno dei quali richiede il superamento di n ≥ 1 prove.
 Quando tutte le n prove sono state
 superate e sono ancora valide, `e possibile registrare il voto. 
 
-//sono superate lo controlla già il BD?
+//Trigger per superamento
+CREATE FUNCTION Is_Passed RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(FALSE=ANY(SELECT stato_superamento
+                 FROM prova p
+                 WHERE new.idE==p.idE))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
 
+CREATE TRIGGER Passed
+BEFORE UPDATE? OR INSERT
+ON registrazione_esame
+FOR EACH ROW?
+EXECUTE FUNCTION Is_Passed
+
+
+//Trigger per validità
 CREATE FUNCTION Is_Valid RETURNS TRIGGER
 AS $$
 BEGIN
@@ -23,9 +42,9 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Valid
-BEFORE UPDATE OR INSERT
+BEFORE UPDATE? OR INSERT
 ON registrazione_esame
-FOR EACH ROW
+FOR EACH ROW?
 EXECUTE FUNCTION Is_Valid
 
 //manca la verbalizzazione
@@ -33,7 +52,24 @@ EXECUTE FUNCTION Is_Valid
 Ogni studente pu`o sostenere una delle prove ad
 uno degli appelli.
 
-//manca il trigger che impedisce di iscriversi a più di uno?
+//lo interpreto come che non posso avere lo stesso studente iscritto allo stesso appello 2 volte, SENZA controllo date
+CREATE FUNCTION Secure_Only_One RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS(SELECT *
+              FROM Appelli a
+              WHERE new.idS=a.idS AND new.idP=a.idP))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Only_One
+BEFORE INSERT
+ON Appelli
+FOR EACH ROW
+EXECUTE FUNCTION Secure_Only_One
 
 Quando si supera una prova, il suo superamento ha una data che registra quando `e stata
 sostenuta e una data che registra la sua scadenza. Dopo la scadenza una prova non `e pi`u valida: rimane
@@ -46,6 +82,7 @@ di invalidazione di una prova `e il sostenimento della stessa prova ad un appell
 recente `e superato, allora il voto precedente si invalida e quello nuovo ne prende il posto. Se invece l’appello
 pi`u recente non `e superato, la prova precedente viene invalidata e si registra la nuova come un fallimento.
 
+//Trigger sostituizione voto
 CREATE FUNCTION Is_Replaced RETURNS TRIGGER
 AS $$
 BEGIN
@@ -56,6 +93,7 @@ BEGIN
                       FROM Appelli
                       WHERE idP=new.idP))
         //aggiorno solo i valori che effettivamente cambiano e non metto che lo stato di superamento è true, potrebbe essere anche false
+        THEN
         UPDATE Appelli
         SET voto=new.voto, stato_superamento=new.stato_superamento
         WHERE idP=new.idP AND idS=new.idS
@@ -65,9 +103,9 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Sostitution
-BEFORE INSERT
+AFTER INSERT
 ON Appelli
-FOR EACH ROW
+FOR EACH STATEMENT
 EXECUTE FUNCTION Is_Replaced 
 
 Il sistema deve essere in grado di visualizzare lo stato di studenti (prove valide sostenute, storico delle
@@ -120,13 +158,163 @@ speciali (es. essere disponibili solo in un certo appello d’esame).
 '''
 #check e trigger da aggiungere
 
+//già fatto sopra (mancerebbe la parte della scritta "ins")
 se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
+
 uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
+
+CREATE FUNCTION 
+AS $$
+BEGIN
+    IF(EXISTS ( SELECT *
+                FROM Appelli a JOIN prova p ON a.idP=p.idP
+                WHERE a.stato_superamento=FALSE AND p.idP=( SELECT p1.idP
+                                                            FROM Appelli a1 JOIN prova p1 ON a1.idP=p1.idP
+                                                            WHERE p1.idP=p.idP AND p1.date<>p.date AND a1.idS=a.idS)))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER 
+BEFORE INSERT OR UPDATE 
+ON Appelli
+FOR EACH ROW
+EXECUTE FUNCTION
+
+//Non ho idea se sia fondato o meno
 un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
-una volta verbalizzato un esame non può essere eliminato dallo studente
+
+//Ho guardato la tabella registrazione esame, ha la FK diretta dalla tabella esame, è impossibile che abbia un esame 
+//non esistente. Anche in appelli l'idP lo prende da un'altra parte, quindi è sempre impossibile
 uno studente non può iscriversi ad un esame che non esiste
+
+//Lo interpreto come che non possono essere registrate diverse prove con lo stesso giorno a uno studente
 uno studente non può iscriversi a più esami lo stesso giorno
+
+CREATE FUNCTION Deny_Insert_Double_Date_Test RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS ( SELECT *
+                FROM prova
+                WHERE new.idS=idS AND new.idP<>idP AND new.data=data))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Date_Test
+BEFORE INSERT
+ON prova
+FOR EACH ROW
+EXECUTE FUNCTION Deny_Insert_Double_Date_Test
+
+//serve realmente? Comunque non c'è la funzione di cancellarlo
+//Lo interpreto come che non posso cancellare un esame se è presente nel registro di un studente
+una volta verbalizzato un esame non può essere eliminato dallo studente
+
+CREATE FUNCTION Deny_Delete_Verbalized_Exam RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS ( SELECT *
+                FROM registrazione_esame
+                WHERE old_table.idE=idE))
+        THEN INSERT INTO esame(idE,nome,anno_accademico,cfu)
+        VALUES(old_table.idE,old_table.nome,old_table.anno_accademico,old_table.cfu)
+    END IF
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Delete_Verbalized_Exam
+AFTER DELETE
+ON esame
+REFERENCING OLD TABLE AS old_table
+FOR EACH STATEMENT
+EXECUTE FUNCTION Deny_Delete_Verbalized_Exam
+
+//lo svolgo anche per prova perchè a logica non si può cancellare
+
+CREATE FUNCTION Deny_Delete_Test_Done RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS ( SELECT *
+                FROM registrazione_esame re JOIN prova p ON re.idE=p.idE
+                WHERE old_table.idP=p.idP))
+        THEN INSERT INTO prova(idP,tipo_voto,idE,tipo_prova,nome_prova,idD,data,data_scadenza,ora_prova,percentuale)
+        VALUES(old_table.idP,old_table.tipo_voto,old_table.idE,old_table.tipo_prova,old_table.nome_prova,old_table.idD,old_table.data,old_table.data_scadenza,old_table.ora_prova,old_table.percentuale)
+    END IF
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Delete_Test_Done
+AFTER DELETE
+ON prova
+REFERENCING OLD TABLE AS old_table
+FOR EACH STATEMENT
+EXECUTE FUNCTION Deny_Delete_Test_Done
+
+//manca UNIQUE su idP? 
 un docente non può creare 2 prove identiche in 2 esami diversi
+
+CREATE FUNCTION Double_Test_Different_Exam RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS ( SELECT *
+                FROM prova p
+                WHERE new.idP=p.idP AND new.idE<>p.idE))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Test_Different_Exam
+BEFORE INSERT OR UPDATE
+ON prova
+FOR EACH ROW
+EXECUTE FUNCTION Deny_Double_Test_Different_Exam
+
+//forse obsoleti
+un docente non può creare 2 prove/esami con stessi id
+
+CREATE FUNCTION Is_Test_Double RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS(SELECT *
+                FROM prova p
+                WHERE new.nome_prova=p.nome_prova))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Test_Name
+BEFORE INSERT OR UPDATE
+ON prova
+FOR EACH ROW
+EXECUTE FUNCTION Is_Test_Double 
+
+//creazione_esame deve diventare esame
+CREATE FUNCTION Is_Exam_Double RETURNS TRIGGER
+AS $$
+BEGIN
+    IF(EXISTS(SELECT *
+                FROM esame e
+                WHERE new.nome=e.nome))
+        THEN RETURN NULL
+    END IF
+    RETURN new
+END
+$$ LANGUAGE PLPGSQL
+
+CREATE TRIGGER Double_Exam_Name
+BEFORE INSERT OR UPDATE
+ON esame
+FOR EACH ROW
+EXECUTE FUNCTION Is_Exam_Double 
 
 #da aggiungere
 
