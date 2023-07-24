@@ -47,25 +47,25 @@
                         <td colspan="5"></td>
                     </tr>
                     {% for record in group %}
-                    <tr>
-                        <td></td>
-                        <td>{{ record[1] }}</td>
-                        <td>{{ record[2] }}</td>
-                        <td>{{ record[3] }}</td>
-                        <td>{{ record[4] }}</td>
-                        <td id="percentuale-{{ loop.index }}">{{ record[5] }}</td>
-                        <td id="voto-{{ loop.index }}">{{ record[6] }}</td>
-                    </tr>
-                    {% if loop.last %}
-                    <tr>
-                        <td colspan="6"></td>
-                        <td>
-                            <!-- Call the openPopup function when the button is clicked -->
-                            <button onclick="openPopup({{ group|tojson }})" class="btn btn-primary">Verbalizza</button>    
-                        </td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
+                <tr>
+                    <td></td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>{{ record[4] }}</td>
+                    <td>{{ record[5] }}</td>
+                    <td>{{ record[6] }}</td>
+                </tr>
+                {% if loop.last %}
+                <tr>
+                    <td colspan="6"></td>
+                    <td>
+                        <button onclick="openPopup([{{ record[5] }}], [{{ record[6] }}])" class="btn btn-primary">Verbalizza</button>    
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -87,58 +87,37 @@
         </div>
     </div>
     
+    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function openPopup(group) {
-            var group = JSON.parse(groupJson);
-            // Show the modal
+        function openPopup(percentuali, voti) {
             $('#myModal').show();
-        
-            // Initialize variables to hold the total calculated value and the result list
-            var totalCalculatedValue = 0;
+    
+            var percentualiArray = percentuali.map(parseFloat);
+            var votiArray = voti.map(parseFloat);
+    
             var resultList = '';
-        
-            // Loop through each record in the group
-            for (var i = 0; i < group.length; i++) {
-                var record = group[i];
-                var percentualeValue = parseFloat(record[5]);
-                var votoValue = parseFloat(record[6]);
-        
-                // Calculate the value for the current record
-                var calculatedValue = (percentualeValue / 100) * votoValue;
-        
-                // Add the calculated value to the total
-                totalCalculatedValue += calculatedValue;
-        
-                // Add the result for the current record to the result list
-                resultList += '<li>' + percentualeValue + '% * ' + votoValue + ' = ' + calculatedValue.toFixed(2) + '</li>';
+            for (var i = 0; i < percentualiArray.length; i++) {
+                var calculatedValue = (percentualiArray[i] / 100) * votiArray[i];
+                resultList += '<li>' + percentualiArray[i] + '% * ' + votiArray[i] + ' = ' + calculatedValue.toFixed(2) + '</li>';
             }
-        
-            // Populate the input field with the total calculated value
-            $('#votoInput').val(totalCalculatedValue.toFixed(2));
-        
-            // Show the list of percentuale and voto values in the popup
             $('#percentualeVotoList').html(resultList);
-        
-            // Handle the "Verbalizza" button inside the modal
+    
             $('#verbalizzaBtn').on('click', function () {
-                // Get the value from the input field
                 var votoDaVerbalizzare = $('#votoInput').val();
-        
-                // Do something with the entered value (e.g., send it to the server)
-                // For this example, we will just log it to the console
                 console.log("Voto da verbalizzare:", votoDaVerbalizzare);
-        
-                // Close the modal after handling the value
+                
                 $('#myModal').hide();
             });
         }
-        
-        // When the user clicks the close button, close the modal
+    
         $('.close').on('click', function () {
             $('#myModal').hide();
         });
-        </script>
-        
+    </script>
+    
+    
+      
 </body>
 </html>

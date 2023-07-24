@@ -602,10 +602,9 @@ def verbalizza(idE):
         #.having(func.sum(Prova.percentuale) == 100)
         .all()
     )
-    lista_voti_studenti_dict = [dict(record) for record in lista_voti_studenti]
-
-    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti_dict)
     
+    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti)
+
 @bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
 @login_required
 def verbalizza_esame(idE,idS):
@@ -623,6 +622,6 @@ def verbalizza_esame(idE,idS):
     
     
     #for each student, get the sum of the percentage of the tests passed
-    res = 10
+    res=10
         
     return jsonify(res)
