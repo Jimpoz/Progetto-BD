@@ -113,32 +113,26 @@ def view_exams():
     
     return flask.render_template('view_exams.html', lista_esami=lista_esami)
 
+from sqlalchemy import or_, cast, String
+from db_setup import Studente, Docente, db
+
 @bp.route('/search_student', methods=['GET', 'POST'])
 @login_required
 def search_student():
-    from db_setup import Studente, Docente, db
     if request.method == 'POST':
         search_query = request.form['search']
         
-        # Query that checks studente through the matricola with the like operator or the Nome or Cognome or Nome + Cognome
-        # for the query of the nome search only those who start with those letters, not only containing
-        # for the query of Nome + Cognome also count the whitespace in the middle
-        # also count the possibility of Cognome + Nome //to do
+        # Add the percentage signs to the search_query for partial matching
+        search_query_with_wildcard = f"%{search_query}%"
+
+        # Query students based on matricola (idS), Nome, Cognome, Nome + Cognome, or Cognome + Nome
         query = db.session.query(Studente).filter(
             or_(
-                cast(Studente.idS, String).like('%' + search_query + '%'),
-                Studente.nome.like(search_query + '%'),
-                Studente.cognome.like(search_query + '%'),
-                Studente.nome.like('%' + search_query + '%'),
-                Studente.cognome.like('%' + search_query + '%'),
-                Studente.nome.like('% ' + search_query + '%'),
-                Studente.cognome.like('% ' + search_query + '%'),
-                cast(Studente.nome, String).like('%' + search_query + '%'),
-                cast(Studente.cognome, String).like('%' + search_query + '%'),
-                cast(Studente.nome, String).like('%' + search_query + '%'),
-                cast(Studente.cognome, String).like('%' + search_query + '%'),
-                cast(Studente.nome, String).like('%' + search_query + '%'),
-                cast(Studente.cognome, String).like('%' + search_query + '%')
+                cast(Studente.idS, String).ilike(search_query_with_wildcard),
+                cast(Studente.nome, String).ilike(search_query_with_wildcard),
+                cast(Studente.cognome, String).ilike(search_query_with_wildcard),
+                cast(Studente.nome + ' ' + Studente.cognome, String).ilike(search_query_with_wildcard),
+                cast(Studente.cognome + ' ' + Studente.nome, String).ilike(search_query_with_wildcard)
             )
         ).all()
 
@@ -146,12 +140,7 @@ def search_student():
         user = Docente.query.get(current_user.idD)
         
         return flask.render_template('student_list.html', user=user, lista_studenti=lista_studenti)
-    
-    # Fetch all students if it's a GET request
-    lista_studenti = db.session.query(Studente).all()
-    user = Docente.query.get(current_user.idD)
-    
-    return flask.render_template('student_list.html', user=user, lista_studenti=lista_studenti)
+
 
 @bp.route('/docenti_list', methods=['GET', 'POST'])
 @login_required
@@ -595,10 +584,19 @@ def verbalizza(idE):
     #FROM studente s join appelli a using(idS) join prova p using (idP)
     #WHERE s.idS IN (SELECT idS FROM appelli WHERE stato_superamento = "True")
 
+    #query that groups the students and finds the prove that have the sum of their percentuale exactly 100
+    #subquery = (
+    #    db.session.query(Appelli.idS)
+    #    .filter(Appelli.stato_superamento == True)
+    #    .subquery()
+    #)
     
     subquery = (
         db.session.query(Appelli.idS)
+        .join(Prova, Prova.idP == Appelli.idP)
         .filter(Appelli.stato_superamento == True)
+        .group_by(Appelli.idS)
+        .having(func.sum(Prova.percentuale) == 100)
         .subquery()
     )
 
@@ -607,6 +605,8 @@ def verbalizza(idE):
         .join(Appelli, Studente.idS == Appelli.idS)
         .join(Prova, Prova.idP == Appelli.idP)
         .filter(Studente.idS.in_(subquery))
+        #.group_by(Studente.idS, Prova.idP, Appelli.voto)
+        #.having(func.sum(Prova.percentuale) == 100)
         .all()
     )
     
@@ -625,7 +625,25 @@ def verbalizza_esame(idE,idS):
     #get the evaluation for those who took the complete exam and also those who took all the tests
     #no need, it returns the idE and idS of that specific student once clicked the "Verbalizza" button
     
-    res = db.session.query() #to be completed
+    #fixare verbalizza, prende anche prove insufficienti
+    #per esempio se uno fallisce mod1 ma poi fa il completo giusto prende entrambi
+    subquery = (
+        db.session.query(Appelli.idS)
+        .filter(Appelli.stato_superamento == True)
+        .subquery()
+    )
+
+    lista_voti_studenti = (
+        db.session.query(Studente.idS, Prova.idP, Prova.data, Prova.data_scadenza, Prova.tipo_voto, Prova.percentuale, Appelli.voto)
+        .join(Appelli, Studente.idS == Appelli.idS)
+        .join(Prova, Prova.idP == Appelli.idP)
+        .filter(Studente.idS.in_(subquery))
+        .all()
+    )
+    
+    #for each student, get the sum of the percentage of the tests passed
+    
+        
     
     
     return flask.render_template('verbalizzazione.html', idE=idE)
