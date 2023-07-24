@@ -53,14 +53,15 @@
                         <td>{{ record[2] }}</td>
                         <td>{{ record[3] }}</td>
                         <td>{{ record[4] }}</td>
-                        <td>{{ record[5] }}</td>
-                        <td>{{ record[6] }}</td>
+                        <td id="percentuale-{{ loop.index }}">{{ record[5] }}</td>
+                        <td id="voto-{{ loop.index }}">{{ record[6] }}</td>
                     </tr>
                     {% if loop.last %}
                     <tr>
                         <td colspan="6"></td>
                         <td>
-                            <button onclick="window.location.href='{{url_for('routes.verbalizza_esame',idE= idE,idS=record[1])}}'" class="btn btn-primary">Verbalizza</button>
+                            <!-- Call the openPopup function when the button is clicked -->
+                            <button onclick="openPopup({{ group|tojson }})" class="btn btn-primary">Verbalizza</button>    
                         </td>
                     </tr>
                     {% endif %}
@@ -75,5 +76,69 @@
 
     <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Voto da verbalizzare:</h3>
+            <br>
+            <ul id="percentualeVotoList"></ul>
+            <p>Media: <input type="text" id="votoInput" readonly></p>
+            <button id="verbalizzaBtn" class="btn btn-primary">Verbalizza</button>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function openPopup(group) {
+            var group = JSON.parse(groupJson);
+            // Show the modal
+            $('#myModal').show();
+        
+            // Initialize variables to hold the total calculated value and the result list
+            var totalCalculatedValue = 0;
+            var resultList = '';
+        
+            // Loop through each record in the group
+            for (var i = 0; i < group.length; i++) {
+                var record = group[i];
+                var percentualeValue = parseFloat(record[5]);
+                var votoValue = parseFloat(record[6]);
+        
+                // Calculate the value for the current record
+                var calculatedValue = (percentualeValue / 100) * votoValue;
+        
+                // Add the calculated value to the total
+                totalCalculatedValue += calculatedValue;
+        
+                // Add the result for the current record to the result list
+                resultList += '<li>' + percentualeValue + '% * ' + votoValue + ' = ' + calculatedValue.toFixed(2) + '</li>';
+            }
+        
+            // Populate the input field with the total calculated value
+            $('#votoInput').val(totalCalculatedValue.toFixed(2));
+        
+            // Show the list of percentuale and voto values in the popup
+            $('#percentualeVotoList').html(resultList);
+        
+            // Handle the "Verbalizza" button inside the modal
+            $('#verbalizzaBtn').on('click', function () {
+                // Get the value from the input field
+                var votoDaVerbalizzare = $('#votoInput').val();
+        
+                // Do something with the entered value (e.g., send it to the server)
+                // For this example, we will just log it to the console
+                console.log("Voto da verbalizzare:", votoDaVerbalizzare);
+        
+                // Close the modal after handling the value
+                $('#myModal').hide();
+            });
+        }
+        
+        // When the user clicks the close button, close the modal
+        $('.close').on('click', function () {
+            $('#myModal').hide();
+        });
+        </script>
+        
 </body>
 </html>

@@ -39,7 +39,6 @@
                     <th>Nome Esame</th>
                     <th>Anno Accademico</th>
                     <th>CFU</th>
-                    <th>Appello</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,8 +74,8 @@
                         <td>{{ esame.nome }}</td>
                         <td>{{ esame.anno_accademico }}</td>
                         <td>{{ esame.cfu }}</td>
-                        <td>{{ esame.registrazione_esame.voto }}</td>
-                        <td>{{ esame.registrazione_esame.data_superamento }}</td>
+                        <td>{{ esame.voto }}</td>
+                        <td>{{ esame.data_superamento }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

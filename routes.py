@@ -576,21 +576,14 @@ def modify_prova(idP):
 def verbalizza(idE):
     from db_setup import Studente, db, Appelli, Prova, Esame, Registrazione_esame
     
-    #da modificare
-    #questa lista mostra solo un voto per ogni studente, anche se non passato
-    #deve mostrare in una riga, per ogni studente, tutti i voti di tutte le prove passate
+    #deletes from the database all appelli with stato_superamento = False
+    #seeing the appelli with a voto = None is not necessary
+    db.session.query(Appelli).filter(Appelli.stato_superamento == False).delete()
+    db.session.commit()
     
     #SELECT s.ids, p.idp, p.data, p.data_scadenza, p.tipo_voto, p.percentuale, a.voto
     #FROM studente s join appelli a using(idS) join prova p using (idP)
     #WHERE s.idS IN (SELECT idS FROM appelli WHERE stato_superamento = "True")
-
-    #query that groups the students and finds the prove that have the sum of their percentuale exactly 100
-    #subquery = (
-    #    db.session.query(Appelli.idS)
-    #    .filter(Appelli.stato_superamento == True)
-    #    .subquery()
-    #)
-    
     subquery = (
         db.session.query(Appelli.idS)
         .join(Prova, Prova.idP == Appelli.idP)
@@ -609,9 +602,10 @@ def verbalizza(idE):
         #.having(func.sum(Prova.percentuale) == 100)
         .all()
     )
-    
-    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti)
+    lista_voti_studenti_dict = [dict(record) for record in lista_voti_studenti]
 
+    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti_dict)
+    
 @bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
 @login_required
 def verbalizza_esame(idE,idS):
@@ -625,28 +619,10 @@ def verbalizza_esame(idE,idS):
     #get the evaluation for those who took the complete exam and also those who took all the tests
     #no need, it returns the idE and idS of that specific student once clicked the "Verbalizza" button
     
-    #fixare verbalizza, prende anche prove insufficienti
-    #per esempio se uno fallisce mod1 ma poi fa il completo giusto prende entrambi
-    
     #if a test does not have a percentage weight on the final score it will be represented through a number n or a +n (n indicates the points to add at the final score)
     
-    subquery = (
-        db.session.query(Appelli.idS)
-        .filter(Appelli.stato_superamento == True)
-        .subquery()
-    )
-
-    lista_voti_studenti = (
-        db.session.query(Studente.idS, Prova.idP, Prova.data, Prova.data_scadenza, Prova.tipo_voto, Prova.percentuale, Appelli.voto)
-        .join(Appelli, Studente.idS == Appelli.idS)
-        .join(Prova, Prova.idP == Appelli.idP)
-        .filter(Studente.idS.in_(subquery))
-        .all()
-    )
     
     #for each student, get the sum of the percentage of the tests passed
-    
+    res = 10
         
-    
-    
-    return flask.render_template('verbalizzazione.html', idE=idE)
+    return jsonify(res)
