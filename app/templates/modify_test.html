@@ -1,3 +1,4 @@
+<!-- DEPRECATED -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +25,7 @@
         <h1>Modifica Prova</h1>
     </div>
 
-    <form id="create_test" method="POST" action="{{ url_for('routes.create_test', idE=idE) }}" class="container">
+    <form id="create_test" method="POST" action="{{ url_for('routes.modify_test', idP=idP) }}" class="container">
         
         <p>Si prega di inserire i seguenti dati:</p>
         {{ form.hidden_tag() }}

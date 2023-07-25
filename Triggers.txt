@@ -321,3 +321,4 @@ EXECUTE FUNCTION Is_Exam_Double
 '''
 
 //mettere il trigger che una persona non puo iscriversi al secondo appello di una prova senza aver superato il primo
+//un esame non può essere modificato dopo la prima registrazione di uno studente ad una prova

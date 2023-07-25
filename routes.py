@@ -399,8 +399,6 @@ def student_page(idS):
         .filter(Appelli.idS == idS, Appelli.idP == Prova.idP, Appelli.stato_superamento == False)
         .all()
     )
-
-
     
     #lista_esami_passati is the list of exams that the student has passed, meaning that all the Prova must have the stato_superamento = True
     # and the sum of their percentage must be 100
@@ -504,7 +502,6 @@ def modify_exam(idE):
 
     esame = Esame.query.filter_by(idE=idE).first()
     form = Modify_Exam(obj=esame)
-    #show_popup = False
     
    
     if form.validate_on_submit():
@@ -526,41 +523,34 @@ def modify_exam(idE):
     esame=db.session.query(Esame).filter(Esame.idE == idE).first()
     
     return flask.render_template('modify_exam.html', form=form, idE=idE, esame=esame)
+'''
+
+the button in the html file
+
+<!--<button id="button_modifica_prova" type="button" onclick="window.location.href='{{url_for('routes.modify_test', idP=prova.idP)}}'" class="btn btn-primary">Modifica prova</button>-->
 
 @bp.route('/modify_test/<string:idP>', methods=['GET', 'POST'])
 @login_required
-def modify_prova(idP):
+def modify_test(idP):
     from db_setup import Prova, Studente, Appelli, db
     from forms import Modify_Test
-    prova = db.session.query(Prova).filter(Prova.idP == idP).first()
+
+    prova = Prova.query.filter_by(idP=idP).first()
+
+    if prova is None:
+        # Handle the case when the prova with the given idP doesn't exist
+        flask.flash('Prova not found', 'error')
+        return redirect(url_for('routes.view_tests'))
+
     form = Modify_Test(obj=prova)
-    #form = Modify_Test()
-    
+
     if form.validate_on_submit():
+        print("Form validated")
         form.populate_obj(prova)
-        idP = form.idP.data
-        nome_prova = form.nome_prova.data
-        tipo_prova = form.tipo_prova.data
-        tipo_voto = form.tipo_voto.data
-        data = form.data.data
-        ora_prova = form.ora_prova.data
-        ora_prova_string = ora_prova.strftime("%H:%M")
-        data_scadenza = form.data_scadenza.data
+        db.session.commit()
+        flask.flash('Prova changed successfully', 'success')
+        return redirect(url_for('routes.prova_page', idP=idP))
 
-        prova = db.session.query(Prova).filter(Prova.idP == idP).first()
-        prova.idP = idP
-        prova.nome_prova = nome_prova
-        prova.tipo_prova = tipo_prova
-        prova.tipo_voto = tipo_voto
-        prova.data = data
-        prova.ora_prova = ora_prova
-        prova.ora_prova_string = ora_prova.strftime("%H:%M")
-        prova.data_scadenza = data_scadenza
-
-    db.session.commit()
-    flask.flash('Prova aggiornata')
-    
-    prova = db.session.query(Prova).filter(Prova.idP == idP).first()
     lista_studenti = (
         db.session.query(Studente)
         .join(Appelli)
@@ -568,9 +558,9 @@ def modify_prova(idP):
         .all()
     )
 
-    return flask.render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
+    return render_template('modify_test.html', form=form, idP=idP, prova=prova, lista_studenti=lista_studenti)
+'''   
 
-    
 @bp.route('/verbalizza/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def verbalizza(idE):

@@ -65,13 +65,12 @@ tr:hover {
     margin-bottom: 20px;
 }
 
-#button_elimina_prova,
-#button_modifica_prova {
+#button_elimina_prova {
     cursor: pointer;
     font-weight: bold;
     max-width: 100px;
     position: relative;
-    left: calc(85% - 120px);
+    left: calc(95%);
     background-color: #f8f8f8;
     color: black;
     border: 1px solid lightgrey;
