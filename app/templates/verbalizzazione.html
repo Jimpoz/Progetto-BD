@@ -43,37 +43,43 @@
                 <tbody>
                     {% for key, group in lista_voti_studenti|groupby(0) %}
                     <tr>
-                        <td>{{ key }}</td>
-                        <td colspan="5"></td>
+                        <td>{{ key }} </td>
+                        <td colspan="6"></td>
                     </tr>
+                    
                     {% for record in group %}
-                <tr>
-                    <td></td>
-                    <td>{{ record[1] }}</td>
-                    <td>{{ record[2] }}</td>
-                    <td>{{ record[3] }}</td>
-                    <td>{{ record[4] }}</td>
-                    <td>{{ record[5] }}</td>
-                    <td>{{ record[6] }}</td>
-                </tr>
-                {% if loop.last %}
-                <tr>
-                    <td colspan="6"></td>
-                    <td>
-                        <button onclick="openPopup([{{ record[5] }}], [{{ record[6] }}])" class="btn btn-primary">Verbalizza</button>    
-                    </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-
+                        <tr>
+                            <td></td>
+                            <td>{{ record[1] }}</td>
+                            <td>{{ record[2] }}</td>
+                            <td>{{ record[3] }}</td>
+                            <td>{{ record[4] }}</td>
+                            <td>{{ record[5] }}</td>
+                            <td>{{ record[6] }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% set voto = 0 %}
+                    {% set total_voto = 0 %}
+                    {% for record in group %}
+                        {% set voto = record[5]/100 * record[6] %}
+                        {% set total_voto = total_voto + voto %}
+                    <tr>
+                        <td colspan="6"></td>
+                        <td>
+                            <div class="voto-block">{{ total_voto }}</div>    
+                        </td>
+                    </tr>
+                    
+                    {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-
         <br>
     </div>
 
+    <button id="VerbalizzaVoti" class="btn btn-primary">Verbalizza voti</button>
+    <hr>
     <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
     <div id="myModal" class="modal">
@@ -86,38 +92,11 @@
             <button id="verbalizzaBtn" class="btn btn-primary">Verbalizza</button>
         </div>
     </div>
-    
-    
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function openPopup(percentuali, voti) {
-            $('#myModal').show();
-    
-            var percentualiArray = percentuali.map(parseFloat);
-            var votiArray = voti.map(parseFloat);
-    
-            var resultList = '';
-            for (var i = 0; i < percentualiArray.length; i++) {
-                var calculatedValue = (percentualiArray[i] / 100) * votiArray[i];
-                resultList += '<li>' + percentualiArray[i] + '% * ' + votiArray[i] + ' = ' + calculatedValue.toFixed(2) + '</li>';
-            }
-            $('#percentualeVotoList').html(resultList);
-    
-            $('#verbalizzaBtn').on('click', function () {
-                var votoDaVerbalizzare = $('#votoInput').val();
-                console.log("Voto da verbalizzare:", votoDaVerbalizzare);
-                
-                $('#myModal').hide();
-            });
-        }
-    
-        $('.close').on('click', function () {
-            $('#myModal').hide();
-        });
+        
     </script>
     
     
-      
 </body>
 </html>

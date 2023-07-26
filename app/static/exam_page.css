@@ -118,3 +118,8 @@ tr:hover {
     text-decoration: none;
     cursor: pointer;
 }
+
+#VerbalizzaVoti{
+    position: relative;
+    left: calc(45%);
+}

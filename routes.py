@@ -593,8 +593,27 @@ def verbalizza(idE):
         .all()
     )
     
-    return flask.render_template('verbalizzazione.html', idE=idE, lista_voti_studenti=lista_voti_studenti)
+    context = {
+        'idE': idE,
+        'lista_voti_studenti': lista_voti_studenti,
+        'calculate_total_voto': '''
+            function calculate_total_voto(group) {
+                var total_voto = 0;
+                for (var i = 0; i < group.length; i++) {
+                    var record = group[i];
+                    var voto = record[5] / 100 * record[6];
+                    total_voto += voto;
+                }
+                return total_voto;
+            }
+        '''
+    }
+    
+    return flask.render_template('verbalizzazione.html', **context)
 
+
+'''
+DEPRECATED
 @bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
 @login_required
 def verbalizza_esame(idE,idS):
@@ -615,3 +634,4 @@ def verbalizza_esame(idE,idS):
     res=10
         
     return jsonify(res)
+'''
