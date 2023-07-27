@@ -322,3 +322,18 @@ EXECUTE FUNCTION Is_Exam_Double
 
 //mettere il trigger che una persona non puo iscriversi al secondo appello di una prova senza aver superato il primo
 //un esame non può essere modificato dopo la prima registrazione di uno studente ad una prova
+
+Ruoli:
+
+CREATE ROLE Docente NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS PASSWORD '****'; 
+GRANT SELECT, INSERT, DELETE ON TABLE Creazione_esame TO Docente;
+GRANT SELECT, INSERT, DELETE ON TABLE Esame TO Docente;
+GRANT SELECT, INSERT, DELETE ON TABLE Prova TO Docente;
+GRANT SELECT, INSERT, DELETE ON TABLE Appelli TO Docente;
+GRANT SELECT, INSERT, DELETE ON TABLE Registrazione_esame TO Docente;
+
+CREATE ROLE Studente NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS PASSWORD '****'; 
+GRANT SELECT ON TABLE Appelli TO Studente;
+GRANT SELECT ON TABLE Esame TO Studente;
+GRANT SELECT ON TABLE Prova TO Studente;
+GRANT SELECT ON TABLE Registrazione_esame TO Studente;
