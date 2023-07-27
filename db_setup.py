@@ -128,10 +128,10 @@ class Creazione_esame(db.Model):
 
 # tabella molti a molti
 class Registrazione_esame(db.Model):
-    __tablename__ = 'Registrazione_esame'
+    __tablename__ = 'registrazione_esame'
 
     idS = db.Column(db.Integer, db.ForeignKey('studente.idS', name=None), primary_key=True)
-    idE = db.Column(db.Integer, db.ForeignKey('esame.idE', name=None), primary_key=True)
+    idE = db.Column(db.String(200), db.ForeignKey('esame.idE', name=None), primary_key=True)
 
     studente = db.relationship('Studente', backref=db.backref('registrazione_esame', cascade='all, delete-orphan'))
     esame = db.relationship('Esame', backref=db.backref('registrazione_esame', cascade='all, delete-orphan'))

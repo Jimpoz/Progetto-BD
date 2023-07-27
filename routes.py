@@ -524,6 +524,7 @@ def modify_exam(idE):
     
     return flask.render_template('modify_exam.html', form=form, idE=idE, esame=esame)
 '''
+@DEPRECATED
 
 the button in the html file
 
@@ -577,7 +578,7 @@ def verbalizza(idE):
     subquery = (
         db.session.query(Appelli.idS)
         .join(Prova, Prova.idP == Appelli.idP)
-        .filter(Appelli.stato_superamento == True)
+        .filter(Appelli.stato_superamento == True, Prova.idE == idE)
         .group_by(Appelli.idS)
         .having(func.sum(Prova.percentuale) == 100 and func.sum(Prova.percentuale) <=100)
         .subquery()
@@ -593,45 +594,37 @@ def verbalizza(idE):
         .all()
     )
     
-    context = {
-        'idE': idE,
-        'lista_voti_studenti': lista_voti_studenti,
-        'calculate_total_voto': '''
-            function calculate_total_voto(group) {
-                var total_voto = 0;
-                for (var i = 0; i < group.length; i++) {
-                    var record = group[i];
-                    var voto = record[5] / 100 * record[6];
-                    total_voto += voto;
-                }
-                return total_voto;
-            }
-        '''
-    }
-    
-    return flask.render_template('verbalizzazione.html', **context)
+    return flask.render_template('verbalizzazione.html', lista_voti_studenti=lista_voti_studenti, idE=idE)
 
 
-'''
-DEPRECATED
-@bp.route('/verbalizza_esame/<string:idE>/<string:idS>', methods=['GET', 'POST'])
+
+
+from datetime import datetime, date
+# ...
+
+from flask import request, jsonify
+from datetime import datetime
+from db_setup import db, Registrazione_esame, Appelli
+
+@bp.route('/verbalizza_voti/<string:idE>', methods=['POST'])
 @login_required
-def verbalizza_esame(idE,idS):
-    from db_setup import db, Studente, Esame, Registrazione_esame, Appelli, Prova
-    
-    #algorithm that returns the final evaluation based also on the weight of each test
-    
-    #example: 22 (50% of 100) + 18 (30% of 100) + 26 (20% of 100)
-            # (22 * 0.5) + (18 * 0.3) + (26 * 0.2) = 21.6 (rounded to 22)
-            
-    #get the evaluation for those who took the complete exam and also those who took all the tests
-    #no need, it returns the idE and idS of that specific student once clicked the "Verbalizza" button
-    
-    #if a test does not have a percentage weight on the final score it will be represented through a number n or a +n (n indicates the points to add at the final score)
-    
-    
-    #for each student, get the sum of the percentage of the tests passed
-    res=10
-        
-    return jsonify(res)
-'''
+def verbalizza_voti(idE):
+    if request.method == 'POST':
+        matricola_totals = request.get_json()
+
+        # Process the matricola_totals dictionary and add voto for each matricola
+        for matricola, total in matricola_totals.items():
+            try:
+                matricola_id = int(matricola)  # Convert the matricola to an integer
+            except ValueError:
+                return jsonify({"error": "Invalid student ID"}), 400
+
+            date = datetime.now()
+            voto = Registrazione_esame(idS=matricola_id, idE=idE, voto=total, data_superamento=date)
+            db.session.add(voto)
+
+        db.session.commit()
+        print("Voti added successfully")
+        return jsonify({"message": "Data received and processed successfully"}), 200
+    else:
+        return redirect(url_for('routes.verbalizza', idE=idE))

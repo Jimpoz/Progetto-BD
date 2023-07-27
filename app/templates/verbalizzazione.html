@@ -38,36 +38,34 @@
                         <th>Tipo Voto</th>
                         <th>Percentuale</th>
                         <th>Voto</th>
-                        <th>Calcolo risultato</th>
+                        <th>Media dei voti</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% set matricola_records = {} %} {# Dictionary to store individual records for each matricola #}
-                    {% set matricola_totals = {} %} {# Dictionary to store total_voto for each matricola #}
-            
+                    {% set matricola_records = {} %} 
+                    {% set matricola_totals = {} %} 
+                
                     {% for record in lista_voti_studenti %}
                         {% set matricola = record[0] %}
                         {% set voto = record[5] / 100 * record[6] %}
-            
-                        {# Add individual record to matricola_records dictionary #}
+                
                         {% if matricola not in matricola_records %}
                             {% set _ = matricola_records.update({matricola: [record]}) %}
                         {% else %}
                             {% set _ = matricola_records[matricola].append(record) %}
                         {% endif %}
-            
-                        {# Calculate total_voto for each matricola and store in matricola_totals dictionary #}
+                
                         {% if matricola not in matricola_totals %}
                             {% set _ = matricola_totals.update({matricola: voto}) %}
                         {% else %}
                             {% set _ = matricola_totals.update({matricola: matricola_totals[matricola] + voto}) %}
                         {% endif %}
                     {% endfor %}
-            
+                
                     {% for matricola, records in matricola_records.items() %}
                         {% for record in records %}
                             <tr>
-                                <td>{{ record[0] }} </td>
+                                <td data-matricola="{{ record[0] }}"> {{ record[0] }} </td>
                                 <td>{{ record[1] }}</td>
                                 <td>{{ record[2] }}</td>
                                 <td>{{ record[3] }}</td>
@@ -79,7 +77,7 @@
                         <tr>
                             <td colspan="7"></td>
                             <td>
-                                <div class="voto-block">{{ matricola_totals[matricola] }}</div>
+                                <div class="voto-block" step="0.01" data-matricola="{{ matricola }}">{{ matricola_totals[matricola] }}</div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -105,7 +103,51 @@
     </div>
 
     <script>
-        
+
+        document.getElementById("VerbalizzaVoti").addEventListener("click", function(event) {
+            event.preventDefault();
+            verbalizzaVoti();
+        });
+    
+        function verbalizzaVoti() {
+            const votoBlocks = document.querySelectorAll(".voto-block");
+            const matricolaTotals = {};
+    
+            votoBlocks.forEach(votoBlock => {
+                const matricola = votoBlock.dataset.matricola;
+                const value = parseFloat(votoBlock.innerText);
+                matricolaTotals[matricola] = value;
+            });
+    
+            // Make an HTTP POST request to the Flask route
+            fetch("{{ url_for('routes.verbalizza_voti', idE=idE) }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(matricolaTotals),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Optional: Handle the response from the server
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+
+        function roundToTwoDecimalPlaces() {
+            console.log("Rounding function called!");
+            const votoBlocks = document.querySelectorAll(".voto-block");
+            votoBlocks.forEach(votoBlock => {
+                const value = parseFloat(votoBlock.innerText);
+                console.log("Value before rounding:", value);
+                const roundedValue = Math.round(value * 100) / 100;
+                console.log("Rounded value:", roundedValue);
+                votoBlock.innerText = roundedValue.toFixed(2);
+            });
+        }
+        roundToTwoDecimalPlaces();
     </script>
     
     
