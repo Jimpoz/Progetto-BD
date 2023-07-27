@@ -38,39 +38,50 @@
                         <th>Tipo Voto</th>
                         <th>Percentuale</th>
                         <th>Voto</th>
+                        <th>Calcolo risultato</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for key, group in lista_voti_studenti|groupby(0) %}
-                    <tr>
-                        <td>{{ key }} </td>
-                        <td colspan="6"></td>
-                    </tr>
-                    
-                    {% for record in group %}
+                    {% set matricola_records = {} %} {# Dictionary to store individual records for each matricola #}
+                    {% set matricola_totals = {} %} {# Dictionary to store total_voto for each matricola #}
+            
+                    {% for record in lista_voti_studenti %}
+                        {% set matricola = record[0] %}
+                        {% set voto = record[5] / 100 * record[6] %}
+            
+                        {# Add individual record to matricola_records dictionary #}
+                        {% if matricola not in matricola_records %}
+                            {% set _ = matricola_records.update({matricola: [record]}) %}
+                        {% else %}
+                            {% set _ = matricola_records[matricola].append(record) %}
+                        {% endif %}
+            
+                        {# Calculate total_voto for each matricola and store in matricola_totals dictionary #}
+                        {% if matricola not in matricola_totals %}
+                            {% set _ = matricola_totals.update({matricola: voto}) %}
+                        {% else %}
+                            {% set _ = matricola_totals.update({matricola: matricola_totals[matricola] + voto}) %}
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% for matricola, records in matricola_records.items() %}
+                        {% for record in records %}
+                            <tr>
+                                <td>{{ record[0] }} </td>
+                                <td>{{ record[1] }}</td>
+                                <td>{{ record[2] }}</td>
+                                <td>{{ record[3] }}</td>
+                                <td>{{ record[4] }}</td>
+                                <td>{{ record[5] }}</td>
+                                <td>{{ record[6] }}</td>
+                            </tr>
+                        {% endfor %}
                         <tr>
-                            <td></td>
-                            <td>{{ record[1] }}</td>
-                            <td>{{ record[2] }}</td>
-                            <td>{{ record[3] }}</td>
-                            <td>{{ record[4] }}</td>
-                            <td>{{ record[5] }}</td>
-                            <td>{{ record[6] }}</td>
+                            <td colspan="7"></td>
+                            <td>
+                                <div class="voto-block">{{ matricola_totals[matricola] }}</div>
+                            </td>
                         </tr>
-                    {% endfor %}
-                    {% set voto = 0 %}
-                    {% set total_voto = 0 %}
-                    {% for record in group %}
-                        {% set voto = record[5]/100 * record[6] %}
-                        {% set total_voto = total_voto + voto %}
-                    <tr>
-                        <td colspan="6"></td>
-                        <td>
-                            <div class="voto-block">{{ total_voto }}</div>    
-                        </td>
-                    </tr>
-                    
-                    {% endfor %}
                     {% endfor %}
                 </tbody>
             </table>
