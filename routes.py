@@ -403,13 +403,9 @@ def student_page(idS):
     #lista_esami_passati is the list of exams that the student has passed, meaning that all the Prova must have the stato_superamento = True
     # and the sum of their percentage must be 100
     lista_esami_passati = (
-        db.session.query(Esame)
-        .join(Prova, Esame.idE == Prova.idE)
-        .join(Appelli)
-        .filter(Appelli.idS == idS, Appelli.idP == Prova.idP, Appelli.stato_superamento == True)
-        .group_by(Esame.idE)
-        .having(func.sum(Prova.percentuale) == 100)
-        .all()
+        db.session.query(Esame.nome, Esame.anno_accademico, Esame.cfu, Registrazione_esame.voto, Registrazione_esame.data_superamento)
+        .join(Registrazione_esame, Esame.idE == Registrazione_esame.idE)
+        .filter(Registrazione_esame.idS == idS)
     )
 
     return flask.render_template('student_page.html', studente=studente, lista_esami_iscritti=lista_esami_iscritti, lista_esami_passati=lista_esami_passati)
@@ -565,11 +561,17 @@ def modify_test(idP):
 @bp.route('/verbalizza/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def verbalizza(idE):
-    from db_setup import Studente, db, Appelli, Prova, Esame, Registrazione_esame
+    from db_setup import Studente, db, Appelli, Prova, Esame, Registrazione_esame, Appelli_audit
     
     #deletes from the database all appelli with stato_superamento = False
     #seeing the appelli with a voto = None is not necessary
-    db.session.query(Appelli).filter(Appelli.stato_superamento == False).delete()
+    #add them to the history in prova_audit
+    history = db.session.query(Appelli).filter(Appelli.stato_superamento == False).all()
+    
+    for appello in history:
+        appello_audit = Appelli_audit(idP=appello.idP, idS=appello.idS, voto=appello.voto, stato_superamento=appello.stato_superamento)
+        db.session.add(appello_audit)
+        db.session.delete(appello)
     db.session.commit()
     
     #SELECT s.ids, p.idp, p.data, p.data_scadenza, p.tipo_voto, p.percentuale, a.voto
@@ -604,27 +606,45 @@ from datetime import datetime, date
 
 from flask import request, jsonify
 from datetime import datetime
-from db_setup import db, Registrazione_esame, Appelli
+from db_setup import db, Registrazione_esame, Appelli, Appelli_audit
 
 @bp.route('/verbalizza_voti/<string:idE>', methods=['POST'])
 @login_required
 def verbalizza_voti(idE):
+    from db_setup import Registrazione_esame, db, Appelli, Appelli_audit
+    
+    matricole = []
+    
     if request.method == 'POST':
         matricola_totals = request.get_json()
 
-        # Process the matricola_totals dictionary and add voto for each matricola
         for matricola, total in matricola_totals.items():
             try:
-                matricola_id = int(matricola)  # Convert the matricola to an integer
+                matricola_id = int(matricola)  # Converting the matricola to an integer
+                matricole.append(matricola_id)
             except ValueError:
                 return jsonify({"error": "Invalid student ID"}), 400
 
             date = datetime.now()
+            
+            #round the total to the nearest integer
+            total = round(total)
             voto = Registrazione_esame(idS=matricola_id, idE=idE, voto=total, data_superamento=date)
             db.session.add(voto)
 
         db.session.commit()
         print("Voti added successfully")
-        return jsonify({"message": "Data received and processed successfully"}), 200
+        
+        # After the votes have been added, delete the Appelli and add them to the Appelli_audit
+        for idS in matricole:
+            appelli = Appelli.query.filter_by(idS=idS).all()
+            for appello in appelli:
+                appello_audit = Appelli_audit(idP=appello.idP, idS=appello.idS, voto=appello.voto, stato_superamento=appello.stato_superamento)
+                db.session.add(appello_audit)
+                db.session.delete(appello)
+            db.session.commit()
+        
+        print("Successfully deleted the appelli and added them to the history")
+        return redirect(url_for('routes.exam_page', idE=idE))
     else:
         return redirect(url_for('routes.verbalizza', idE=idE))

@@ -110,6 +110,7 @@ class Appelli(db.Model):
         self.voto = voto
         self.stato_superamento = stato_superamento
 
+
 # tabella molti a molti
 class Creazione_esame(db.Model):
     __tablename__ = 'Creazione_esame'
@@ -144,4 +145,18 @@ class Registrazione_esame(db.Model):
         self.idE = idE
         self.voto = voto
         self.data_superamento = data_superamento
-        
+
+#history of Appelli
+class Appelli_audit(db.Model):
+    __tablename__ = 'Appelli_audit'
+
+    idP = db.Column(db.String(100), primary_key=True)
+    idS = db.Column(db.Integer, primary_key=True)
+    voto = db.Column(db.Integer)
+    stato_superamento = db.Column(db.Boolean)
+
+    def __init__(self, idP, idS, voto, stato_superamento):
+        self.idP = idP
+        self.idS = idS
+        self.voto = voto
+        self.stato_superamento = stato_superamento
