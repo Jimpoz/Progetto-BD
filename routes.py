@@ -255,13 +255,14 @@ def create_test(idE):
         nome_prova = form.nome_prova.data
         tipo_prova = form.tipo_prova.data
         tipo_voto = form.tipo_voto.data
-        percentuale = form.percentuale.data
+        sufficienza = form.sufficienza.data
+        peso = form.peso.data
         data = form.data.data
         ora_prova = form.ora_prova.data
         ora_prova_string = ora_prova.strftime('%H:%M')
         data_scadenza = form.data_scadenza.data
         
-        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto, percentuale=percentuale ,data=data, ora_prova=ora_prova_string, data_scadenza=data_scadenza)
+        prova = Prova(idP=idP, idE=idE, idD=idD, nome_prova=nome_prova, tipo_prova=tipo_prova, tipo_voto=tipo_voto,sufficienza=sufficienza, peso=peso ,data=data, ora_prova=ora_prova_string, data_scadenza=data_scadenza)
         
         if Prova.query.filter_by(idP=idP, idE=idE).first() is not None:
             flask.flash('Prova già esistente')
@@ -574,36 +575,27 @@ def verbalizza(idE):
         db.session.delete(appello)
     db.session.commit()
     
-    #SELECT s.ids, p.idp, p.data, p.data_scadenza, p.tipo_voto, p.percentuale, a.voto
-    #FROM studente s join appelli a using(idS) join prova p using (idP)
-    #WHERE s.idS IN (SELECT idS FROM appelli WHERE stato_superamento = "True")
     subquery = (
         db.session.query(Appelli.idS)
         .join(Prova, Prova.idP == Appelli.idP)
         .filter(Appelli.stato_superamento == True, Prova.idE == idE)
         .group_by(Appelli.idS)
-        .having(func.sum(Prova.percentuale) == 100 and func.sum(Prova.percentuale) <=100)
+        .having(func.sum(Prova.peso) == 100 and func.sum(Prova.peso) <=100)
         .subquery()
     )
 
     lista_voti_studenti = (
-        db.session.query(Studente.idS, Prova.idP, Prova.data, Prova.data_scadenza, Prova.tipo_voto, Prova.percentuale, Appelli.voto)
+        db.session.query(Studente.idS, Prova.idP, Prova.data, Prova.tipo_prova, Prova.tipo_voto, Prova.peso, Appelli.voto, Prova.sufficienza)
         .join(Appelli, Studente.idS == Appelli.idS)
         .join(Prova, Prova.idP == Appelli.idP)
-        .filter(Studente.idS.in_(subquery))
-        #.group_by(Studente.idS, Prova.idP, Appelli.voto)
-        #.having(func.sum(Prova.percentuale) == 100)
+        .filter(Studente.idS.in_(subquery), Prova.idE == idE)
         .all()
     )
     
     return flask.render_template('verbalizzazione.html', lista_voti_studenti=lista_voti_studenti, idE=idE)
 
 
-
-
 from datetime import datetime, date
-# ...
-
 from flask import request, jsonify
 from datetime import datetime
 from db_setup import db, Registrazione_esame, Appelli, Appelli_audit
@@ -611,7 +603,7 @@ from db_setup import db, Registrazione_esame, Appelli, Appelli_audit
 @bp.route('/verbalizza_voti/<string:idE>', methods=['POST'])
 @login_required
 def verbalizza_voti(idE):
-    from db_setup import Registrazione_esame, db, Appelli, Appelli_audit
+    from db_setup import Registrazione_esame, db, Appelli, Appelli_audit,Esame, Docente, Prova, Creazione_esame
     
     matricole = []
     
@@ -645,6 +637,26 @@ def verbalizza_voti(idE):
             db.session.commit()
         
         print("Successfully deleted the appelli and added them to the history")
+        
+        esame=db.session.query(Esame).filter(Esame.idE == idE).first()
+        lista_docenti = db.session.query(Docente).join(Creazione_esame).filter(Creazione_esame.idE == idE).all()
+
+        lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
+        
+        docenti_roles = (
+            db.session.query(Docente, Creazione_esame.ruolo_docente)
+            .join(Creazione_esame)
+            .filter(Creazione_esame.idE == idE)
+            .all()
+        )
+        
+        user_role = (
+            db.session.query(Creazione_esame.ruolo_docente)
+            .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
+            .scalar()
+        )
+        
+        
         return redirect(url_for('routes.exam_page', idE=idE))
     else:
         return redirect(url_for('routes.verbalizza', idE=idE))

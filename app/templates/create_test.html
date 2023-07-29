@@ -43,11 +43,16 @@
         <div class="form-group">
             {{ form.tipo_voto.label(class="col-form-label font-weight-bold") }}
             {{ form.tipo_voto(id="tipo_voto", class="form-control", placeholder="Tipo Voto") }}
-        </div>        
+        </div>
+        
+        <div class="form-group">
+            {{ form.sufficienza.label(class="col-form-label font-weight-bold") }}
+            {{ form.sufficienza(id="sufficienza", class="form-control", placeholder="Sufficienza") }}
+        </div>
 
         <div class="form-group" id="valore_prova_group">
-            <p>Valore della prova (in percentuale)</p>
-            {{ form.percentuale(class="form-control", placeholder="Percentuale") }}
+            {{ form.peso.label(class="col-form-label font-weight-bold") }}
+            {{ form.peso(class="form-control", placeholder="Peso della prova") }}
         </div>
     
         <div class="form-group">

@@ -72,21 +72,23 @@ class Prova(db.Model):
     nome_prova = db.Column(db.String(100))
     tipo_prova = db.Column(db.Enum(Tipo_Prova))
     tipo_voto = db.Column(db.String(100))
-    percentuale = db.Column(db.Integer)
+    sufficienza = db.Column(db.Integer)
+    peso = db.Column(db.Integer)
     data = db.Column(db.Date)
     ora_prova = db.Column(db.String(100))
     data_scadenza = db.Column(db.Date)
     idE = db.Column(db.String(100), db.ForeignKey('esame.idE'))
     idD = db.Column(db.String(100), db.ForeignKey('docente.idD'))
 
-    def __init__(self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, percentuale, data, ora_prova, data_scadenza):
+    def __init__(self, idP, idE, idD, nome_prova, tipo_prova, tipo_voto, sufficienza, peso, data, ora_prova, data_scadenza):
         self.idP = idP
         self.idE = idE
         self.idD = idD
         self.nome_prova = nome_prova
         self.tipo_prova = tipo_prova
         self.tipo_voto = tipo_voto
-        self.percentuale = percentuale
+        self.sufficienza = sufficienza
+        self.peso = peso
         self.data = data
         self.ora_prova = ora_prova
         self.data_scadenza = data_scadenza

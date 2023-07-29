@@ -34,10 +34,11 @@
                         <th>Matricola</th>
                         <th>idP</th>
                         <th>Data</th>
-                        <th>Data Scadenza</th>
+                        <th>Tipo prova</th>
                         <th>Tipo Voto</th>
-                        <th>Percentuale</th>
+                        <th>Peso prova</th>
                         <th>Voto</th>
+                        <th>Sufficienza</th>
                         <th>Media dei voti</th>
                     </tr>
                 </thead>
@@ -72,12 +73,13 @@
                                 <td>{{ record[4] }}</td>
                                 <td>{{ record[5] }}</td>
                                 <td>{{ record[6] }}</td>
+                                <td>{{ record[7] }}</td>
                             </tr>
                         {% endfor %}
                         <tr>
-                            <td colspan="7"></td>
+                            <td colspan="8"></td>
                             <td>
-                                <div class="voto-block" step="0.01" data-matricola="{{ matricola }}">{{ matricola_totals[matricola] }}</div>
+                                <div class="voto-block" step="0.01" data-matricola="{{ matricola }}" contenteditable="true">{{ matricola_totals[matricola] }}</div>
                             </td>
                         </tr>
                     {% endfor %}
