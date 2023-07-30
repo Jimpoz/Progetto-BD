@@ -89,7 +89,8 @@
         <br>
     </div>
 
-    <button id="VerbalizzaVoti" class="btn btn-primary">Verbalizza voti</button>
+    <button id="VerbalizzaVoti" class="btn btn-primary" onclick="window.location.href='{{url_for('routes.exam_page', idE=idE)}}'">Verbalizza voti</button>
+    
     <hr>
     <button id="goback" onclick="goBack()" class="button-goback btn btn-secondary">Indietro</button>
 
