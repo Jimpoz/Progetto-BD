@@ -653,7 +653,6 @@ def verbalizza_voti(idE):
             .scalar()
         )
 
-        # Instead of redirecting, render the exam_page template with the updated data
         return render_template('exam_page.html', esame=esame, lista_prove=lista_prove, lista_docenti=lista_docenti, docenti_roles=docenti_roles, user_role=user_role)
     else:
         return redirect(url_for('routes.verbalizza', idE=idE))
