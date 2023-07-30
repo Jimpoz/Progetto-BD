@@ -325,3 +325,6 @@ EXECUTE FUNCTION Is_Exam_Double
 //mettere il trigger che una persona non puo iscriversi al secondo appello di una prova senza aver superato il primo
 //un esame non può essere modificato dopo la prima registrazione di uno studente ad una prova
 //se il secondo appello risulta ins e il primo positivo, eliminare entrambi dalla tabella appelli ed aggiungerli alla history (ossia Appelli_audit)
+
+ALTER TABLE prova ADD CONSTRAINT Controllo_Sufficienza
+CHECK (voto<=sufficienza OR stato_superamento=TRUE)
