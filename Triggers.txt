@@ -103,10 +103,12 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Sostitution
-AFTER INSERT
+AFTER INSERT OR UPDATE
 ON Appelli
 FOR EACH STATEMENT
 EXECUTE FUNCTION Is_Replaced 
+
+//UPDATE sostituisce Registra_Voto
 
 Il sistema deve essere in grado di visualizzare lo stato di studenti (prove valide sostenute, storico delle
 prove sostenute...) ed appelli (studenti che hanno superato le diverse prove). 
