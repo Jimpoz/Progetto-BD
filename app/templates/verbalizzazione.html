@@ -114,14 +114,12 @@
         function verbalizzaVoti() {
             const votoBlocks = document.querySelectorAll(".voto-block");
             const matricolaTotals = {};
-    
+        
             votoBlocks.forEach(votoBlock => {
                 const matricola = votoBlock.dataset.matricola;
                 const value = parseFloat(votoBlock.innerText);
                 matricolaTotals[matricola] = value;
             });
-    
-            // Make an HTTP POST request to the Flask route
             fetch("{{ url_for('routes.verbalizza_voti', idE=idE) }}", {
                 method: "POST",
                 headers: {
@@ -131,12 +129,22 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Optional: Handle the response from the server
+                console.log(data);
+                fetch("{{ url_for('routes.exam_page', idE=idE) }}")
+                .then(response => response.text())
+                .then(data => {
+                    document.open();
+                    document.write(data);
+                    document.close();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
             })
             .catch(error => {
                 console.error("Error:", error);
             });
-        }
+        }        
 
         function roundToTwoDecimalPlaces() {
             console.log("Rounding function called!");

@@ -600,7 +600,7 @@ from flask import request, jsonify
 from datetime import datetime
 from db_setup import db, Registrazione_esame, Appelli, Appelli_audit
 
-@bp.route('/verbalizza_voti/<string:idE>', methods=['POST'])
+@bp.route('/verbalizza_voti/<string:idE>', methods=['GET', 'POST'])
 @login_required
 def verbalizza_voti(idE):
     from db_setup import Registrazione_esame, db, Appelli, Appelli_audit,Esame, Docente, Prova, Creazione_esame
@@ -640,23 +640,20 @@ def verbalizza_voti(idE):
         
         esame=db.session.query(Esame).filter(Esame.idE == idE).first()
         lista_docenti = db.session.query(Docente).join(Creazione_esame).filter(Creazione_esame.idE == idE).all()
-
         lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
-        
         docenti_roles = (
             db.session.query(Docente, Creazione_esame.ruolo_docente)
             .join(Creazione_esame)
             .filter(Creazione_esame.idE == idE)
             .all()
         )
-        
         user_role = (
             db.session.query(Creazione_esame.ruolo_docente)
             .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
             .scalar()
         )
-        
-        
-        return redirect(url_for('routes.exam_page', idE=idE))
+
+        # Instead of redirecting, render the exam_page template with the updated data
+        return render_template('exam_page.html', esame=esame, lista_prove=lista_prove, lista_docenti=lista_docenti, docenti_roles=docenti_roles, user_role=user_role)
     else:
         return redirect(url_for('routes.verbalizza', idE=idE))
