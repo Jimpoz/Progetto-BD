@@ -5,7 +5,7 @@ nuovi esami, ciascuno dei quali richiede il superamento di n ≥ 1 prove.
 
 Quando tutte le n prove sono state
 superate e sono ancora valide, `e possibile registrare il voto. 
-
+-----------------------------------------------------
 //Trigger per superamento
 CREATE FUNCTION Is_Passed RETURNS TRIGGER
 AS $$
@@ -20,11 +20,11 @@ END
 $$ LANGUAGE PLPGSQL
 
 CREATE TRIGGER Passed
-BEFORE UPDATE? OR INSERT
+BEFORE INSERT
 ON registrazione_esame
-FOR EACH ROW?
+FOR EACH ROW
 EXECUTE FUNCTION Is_Passed
-
+------------------------------------------------------
 
 //Trigger per validità
 CREATE FUNCTION Is_Valid RETURNS TRIGGER
@@ -40,14 +40,14 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Valid
-BEFORE UPDATE? OR INSERT
+BEFORE INSERT
 ON registrazione_esame
-FOR EACH ROW?
+FOR EACH ROW
 EXECUTE FUNCTION Is_Valid
-
-//manca la verbalizzazione
+-----------------------------------------------------
 
 Ogni studente pu`o sostenere una delle prove ad
 uno degli appelli.
@@ -64,13 +64,14 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Only_One
 BEFORE INSERT
 ON Appelli
 FOR EACH ROW
 EXECUTE FUNCTION Secure_Only_One
-
+----------------------------------------------------------
 Quando si supera una prova, il suo superamento ha una data che registra quando `e stata
 sostenuta e una data che registra la sua scadenza. Dopo la scadenza una prova non `e pi`u valida: rimane
 nel sistema, ma dal punto di vista della registrazione `e come se non fosse stata superata.
@@ -101,6 +102,7 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Sostitution
 AFTER INSERT OR UPDATE
@@ -109,18 +111,18 @@ FOR EACH STATEMENT
 EXECUTE FUNCTION Is_Replaced 
 
 //UPDATE sostituisce Registra_Voto
-
+--------------------------------------------------
 Il sistema deve essere in grado di visualizzare lo stato di studenti (prove valide sostenute, storico delle
 prove sostenute...) ed appelli (studenti che hanno superato le diverse prove). 
 
-//dovremmo aggiungere sezioni nel sito o è a posto cosi?
+//OK
 
 Deve essere possibile ottenere
 l’elenco degli studenti che sono in condizione di avere l’esame registrato (ma non lo hanno ancora fatto)
 perch`e tutte le n prove sono superate e valide, mostrando per ciascuno le caratteristiche delle prove che
 abilitano la registrazione dell’esame.
 
-//dovrebbe essere la sezione verbalizzazione, che è da finalizzare
+//dovrebbe essere la sezione verbalizzazione
 
 Vengono forniti alcuni spunti possibili per arricchire lo scenario, senza pretesa di esaustivit`a:
  Ogni prova ha una diversa tipologia (scritto, orale, progetto...) 
@@ -164,8 +166,8 @@ speciali (es. essere disponibili solo in un certo appello d’esame).
 se nella lista appelli c'è almeno un stato_superamento = False allora nella verbalizzazione risulta ins
 
 uno studente non può iscriversi al secondo appelli se non ha superato il primo, fare il controllo tramite la data
-
-CREATE FUNCTION 
+----------------------------------------------------
+CREATE FUNCTION Passed_First_Test RETURNS TRIGGER
 AS $$
 BEGIN
     IF(EXISTS ( SELECT *
@@ -178,15 +180,15 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
-CREATE TRIGGER 
+CREATE TRIGGER First_Test
 BEFORE INSERT OR UPDATE 
 ON Appelli
 FOR EACH ROW
-EXECUTE FUNCTION
+EXECUTE FUNCTION Passed_First_Test
+-------------------------------------------------
 
-//Non ho idea se sia fondato o meno
-un esame non può essere eliminato 7 giorni prima della data del primo appello(?) -> da verificare
 
 //Ho guardato la tabella registrazione esame, ha la FK diretta dalla tabella esame, è impossibile che abbia un esame 
 //non esistente. Anche in appelli l'idP lo prende da un'altra parte, quindi è sempre impossibile
@@ -206,14 +208,15 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Double_Date_Test
 BEFORE INSERT
 ON prova
 FOR EACH ROW
 EXECUTE FUNCTION Deny_Insert_Double_Date_Test
+-----------------------------------------------------------
 
-//serve realmente? Comunque non c'è la funzione di cancellarlo
 //Lo interpreto come che non posso cancellare un esame se è presente nel registro di un studente
 una volta verbalizzato un esame non può essere eliminato dallo studente
 
@@ -228,6 +231,7 @@ BEGIN
     END IF
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Delete_Verbalized_Exam
 AFTER DELETE
@@ -235,7 +239,7 @@ ON esame
 REFERENCING OLD TABLE AS old_table
 FOR EACH STATEMENT
 EXECUTE FUNCTION Deny_Delete_Verbalized_Exam
-
+---------------------------------------------------
 //lo svolgo anche per prova perchè a logica non si può cancellare
 
 CREATE FUNCTION Deny_Delete_Test_Done RETURNS TRIGGER
@@ -249,6 +253,7 @@ BEGIN
     END IF
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Delete_Test_Done
 AFTER DELETE
@@ -256,11 +261,10 @@ ON prova
 REFERENCING OLD TABLE AS old_table
 FOR EACH STATEMENT
 EXECUTE FUNCTION Deny_Delete_Test_Done
-
-//manca UNIQUE su idP? 
+----------------------------------------------------
 un docente non può creare 2 prove identiche in 2 esami diversi
 
-CREATE FUNCTION Double_Test_Different_Exam RETURNS TRIGGER
+CREATE FUNCTION Deny_Double_Test_Different_Exam RETURNS TRIGGER
 AS $$
 BEGIN
     IF(EXISTS ( SELECT *
@@ -271,14 +275,15 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Double_Test_Different_Exam
 BEFORE INSERT OR UPDATE
 ON prova
 FOR EACH ROW
 EXECUTE FUNCTION Deny_Double_Test_Different_Exam
+-----------------------------------------------------
 
-//forse obsoleti
 un docente non può creare 2 prove/esami con stessi id
 
 CREATE FUNCTION Is_Test_Double RETURNS TRIGGER
@@ -292,14 +297,15 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA
 
 CREATE TRIGGER Double_Test_Name
 BEFORE INSERT OR UPDATE
 ON prova
 FOR EACH ROW
 EXECUTE FUNCTION Is_Test_Double 
+---------------------------------------
 
-//creazione_esame deve diventare esame
 CREATE FUNCTION Is_Exam_Double RETURNS TRIGGER
 AS $$
 BEGIN
@@ -311,6 +317,7 @@ BEGIN
     RETURN new
 END
 $$ LANGUAGE PLPGSQL
+//AGGIUNTA CONTROLLA Creazione_esame
 
 CREATE TRIGGER Double_Exam_Name
 BEFORE INSERT OR UPDATE
@@ -326,5 +333,6 @@ EXECUTE FUNCTION Is_Exam_Double
 //un esame non può essere modificato dopo la prima registrazione di uno studente ad una prova
 //se il secondo appello risulta ins e il primo positivo, eliminare entrambi dalla tabella appelli ed aggiungerli alla history (ossia Appelli_audit)
 
+//voto lo calcoli in verbalizza
 ALTER TABLE prova ADD CONSTRAINT Controllo_Sufficienza
 CHECK (voto<=sufficienza OR stato_superamento=TRUE)
