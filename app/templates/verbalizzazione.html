@@ -45,22 +45,27 @@
                 <tbody>
                     {% set matricola_records = {} %}
                     {% set matricola_totals = {} %}
+                    {% set matricola_has_non_bonus_records = {} %}
                     
                     {% for record in lista_voti_studenti %}
                         {% set matricola = record[0] %}
                         {% set voto = 0 %}
                         
-                        {% if record[3]|lower != "punti bonus" %}
+                        {% set tipo_prova = record[4]|lower %}
+                        {% set is_punti_bonus = tipo_prova == "punti bonus" %}
+                
+                        {% if not is_punti_bonus %}
                             {% set voto = record[5] / 100 * record[6] %}
+                            {% set _ = matricola_has_non_bonus_records.update({matricola: true}) %}
                         {% endif %}
-                        
+                
                         {% if matricola not in matricola_records %}
                             {% set _ = matricola_records.update({matricola: [record]}) %}
                         {% else %}
                             {% set _ = matricola_records[matricola].append(record) %}
                         {% endif %}
-                        
-                        {% if record[3]|lower != "punti bonus" %}
+                
+                        {% if not is_punti_bonus %}
                             {% if matricola not in matricola_totals %}
                                 {% set _ = matricola_totals.update({matricola: voto}) %}
                             {% else %}
@@ -68,8 +73,7 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                                        
-
+                    
                     {% for matricola, records in matricola_records.items() %}
                         {% for record in records %}
                             <tr>
@@ -83,14 +87,29 @@
                                 <td>{{ record[7] }}</td>
                             </tr>
                         {% endfor %}
-                        <tr>
-                            <td colspan="8"></td>
-                            <td>
-                                <div class="voto-block" step="0.01" data-matricola="{{ matricola }}" contenteditable="true">{{ matricola_totals[matricola] }}</div>
-                            </td>
-                        </tr>
+                        {% if not matricola_has_non_bonus_records.get(matricola, false) %}
+                            <tr>
+                                <td colspan="8"></td>
+                                <td>
+                                    <div class="voto-block" step="0.01" data-matricola="{{ matricola }}" contenteditable="true">
+                                        Inserisci voto
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% if matricola in matricola_totals %}
+                            <tr>
+                                <td colspan="8"></td>
+                                <td>
+                                    <div class="voto-block" step="0.01" data-matricola="{{ matricola }}" contenteditable="true">
+                                        {{ matricola_totals[matricola] }}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
+                                                             
             </table>
         </div>
         <br>
