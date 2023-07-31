@@ -43,26 +43,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% set matricola_records = {} %} 
-                    {% set matricola_totals = {} %} 
-                
+                    {% set matricola_records = {} %}
+                    {% set matricola_totals = {} %}
+                    
                     {% for record in lista_voti_studenti %}
                         {% set matricola = record[0] %}
-                        {% set voto = record[5] / 100 * record[6] %}
-                
+                        {% set voto = 0 %}
+                        
+                        {% if record[3]|lower != "punti bonus" %}
+                            {% set voto = record[5] / 100 * record[6] %}
+                        {% endif %}
+                        
                         {% if matricola not in matricola_records %}
                             {% set _ = matricola_records.update({matricola: [record]}) %}
                         {% else %}
                             {% set _ = matricola_records[matricola].append(record) %}
                         {% endif %}
-                
-                        {% if matricola not in matricola_totals %}
-                            {% set _ = matricola_totals.update({matricola: voto}) %}
-                        {% else %}
-                            {% set _ = matricola_totals.update({matricola: matricola_totals[matricola] + voto}) %}
+                        
+                        {% if record[3]|lower != "punti bonus" %}
+                            {% if matricola not in matricola_totals %}
+                                {% set _ = matricola_totals.update({matricola: voto}) %}
+                            {% else %}
+                                {% set _ = matricola_totals.update({matricola: matricola_totals[matricola] + voto}) %}
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
-                
+                                        
+
                     {% for matricola, records in matricola_records.items() %}
                         {% for record in records %}
                             <tr>
