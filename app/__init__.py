@@ -2,8 +2,9 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from routes import bp as routes_bp
-##carico le variabili d'ambiente contenute nel file .env
 from dotenv import load_dotenv
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 load_dotenv()
 
 def create_app():

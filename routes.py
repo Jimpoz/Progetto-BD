@@ -1,4 +1,5 @@
 import flask
+import logging
 from flask import Blueprint, request, jsonify, redirect, render_template, url_for
 from flask_login import login_required, login_user, current_user
 from flask_login import LoginManager
@@ -6,36 +7,44 @@ from datetime import datetime
 from flask import escape
 from sqlalchemy import and_, func, not_, or_, any_, exists, case, cast, String
 from sqlalchemy.orm import joinedload
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 login_manager = LoginManager()
 
 bp = Blueprint('routes', __name__)
 
+logging.basicConfig(filename='accessi_utenti.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 @bp.route('/', methods=['GET', 'POST'])
 def login():
-    from db_setup import Docente
     from forms import Login_form
-    from flask_login import current_user, logout_user, login_user
     from werkzeug.security import check_password_hash
+    from flask import flash
+    import time
+    
     form = Login_form()
-
+    
     if current_user.is_authenticated:
-        return flask.redirect(flask.url_for('routes.logout'))  # Redirect to the logout route
+        return redirect(url_for('routes.logout'))  # Redirect to the logout route
 
     if form.validate_on_submit():
         docente = Docente.query.filter_by(email=form.email.data).first()  # parametrizzato
         if not docente or not check_password_hash(docente.password, form.password.data):
-            flask.flash('Invalid username or password.')
-            return flask.redirect(flask.url_for('routes.login'))
+            flash('Invalid username or password.')
+            logger.warning(f"Failed login attempt for user with email: {form.email.data} from IP: {request.remote_addr}")
+            return redirect(url_for('routes.login'))
         else:
             login_user(docente)
-            flask.flash('Logged in successfully.')
-            return flask.redirect(flask.url_for('routes.homepage'))  # Redirect to the homepage route
+            flash('Logged in successfully.')
+            logger.info(f"User with email: {form.email.data} logged in successfully from IP: {request.remote_addr}")
+            return redirect(url_for('routes.homepage'))  # Redirect to the homepage route
 
-    if flask.request.referrer and 'logout' in flask.request.referrer:
-        flask.flash('You need to log in to access this page.')  # Display an error message
+    if request.referrer and 'logout' in request.referrer:
+        flash('You need to log in to access this page.')  # Display an error message
     
-    return flask.render_template('login.html', form=form)
+    return render_template('login.html', form=form)
 
 
 @bp.route('/logout', methods=['GET', 'POST'])
@@ -638,21 +647,7 @@ def verbalizza_voti(idE):
         
         print("Successfully deleted the appelli and added them to the history")
         
-        esame=db.session.query(Esame).filter(Esame.idE == idE).first()
-        lista_docenti = db.session.query(Docente).join(Creazione_esame).filter(Creazione_esame.idE == idE).all()
-        lista_prove = db.session.query(Prova).filter(Prova.idE == idE).all()
-        docenti_roles = (
-            db.session.query(Docente, Creazione_esame.ruolo_docente)
-            .join(Creazione_esame)
-            .filter(Creazione_esame.idE == idE)
-            .all()
-        )
-        user_role = (
-            db.session.query(Creazione_esame.ruolo_docente)
-            .filter(Creazione_esame.idE == idE, Creazione_esame.idD == current_user.idD)
-            .scalar()
-        )
-
-        return render_template('exam_page.html', esame=esame, lista_prove=lista_prove, lista_docenti=lista_docenti, docenti_roles=docenti_roles, user_role=user_role)
+        return redirect(url_for('routes.exam_page', idE=idE))
+        
     else:
         return redirect(url_for('routes.verbalizza', idE=idE))
